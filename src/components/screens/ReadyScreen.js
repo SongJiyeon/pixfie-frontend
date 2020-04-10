@@ -5,12 +5,12 @@ import * as ImagePicker from 'expo-image-picker';
 
 import axios from 'axios';
 
-import { setPhoto } from '../../actions/index';
+import { setPhoto, setFaceLandmarks } from '../../actions/index';
+import { IP_ADDRESS } from '../../constants/config';
 
-function ReadyScreen ({ photoUrl, setPhoto, navigation }) {
+function ReadyScreen ({ loggedIn, photoUrl, setPhoto, setFaceLandmarks, navigation }) {
 
-  const fetchImage = () => {
-    console.log(photoUrl);
+  const fetchImage = async () => {
     const photo = {
       uri: photoUrl,
       name: 'new-photo.jpg',
@@ -20,21 +20,17 @@ function ReadyScreen ({ photoUrl, setPhoto, navigation }) {
     const data = new FormData();
     data.append('photo', photo);
 
-    axios({
-      method: 'POST',
-      url: `http://192.168.0.136:3000/api/photo`,
-      body: data,
+    axios.post(`${IP_ADDRESS}/api/users/${loggedIn.user._id}/photos`, data, {
       headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+        'Content-Type': 'multipart/form-data'
+      }
     })
     .then(response => {
-      console.log("upload success", response.data);
-      navigation.navigate('Home');
+      setFaceLandmarks(response.data);
+      navigation.navigate('Result');
     })
     .catch(error => {
-      console.log("upload error", error);
-      alert("Upload failed!");
+      console.log('error', error);
     });
   };
 
@@ -68,18 +64,18 @@ function ReadyScreen ({ photoUrl, setPhoto, navigation }) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.main}>
+      <View style={styles.photoContainer}>
       {photoUrl &&
         <Image source={{ uri: photoUrl }} style={{ width: 200, height: 200 }} />}
       </View>
-      <TouchableOpacity style={styles.button} onPress={fetchImage}>
-        <Text>픽셀 프로필 만들기</Text>
+      <TouchableOpacity style={styles.buttonReady} onPress={fetchImage}>
+        <Text style={styles.buttonText}>픽셀 프로필 만들기</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={openCamera}>
-        <Text>사진 다시 찍기</Text>
+      <TouchableOpacity style={styles.buttonCamera} onPress={openCamera}>
+        <Text style={styles.buttonText}>사진 다시 찍기</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={pickImage}>
-        <Text>사진 다시 가져오기</Text>
+      <TouchableOpacity style={styles.buttonGallery} onPress={pickImage}>
+        <Text style={styles.buttonText}>사진 다시 가져오기</Text>
       </TouchableOpacity>
     </View>
   );
@@ -87,13 +83,15 @@ function ReadyScreen ({ photoUrl, setPhoto, navigation }) {
 
 const mapStateToProps = state => {
   return {
+    loggedIn: state.loggedIn,
     photoUrl: state.photo
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    setPhoto: photo => { dispatch(setPhoto(photo)); }
+    setPhoto: photo => { dispatch(setPhoto(photo)); },
+    setFaceLandmarks: result => { dispatch(setFaceLandmarks(result)); }
   };
 };
 
@@ -105,16 +103,46 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  button: {
-    borderRadius: 10,
-    width: 150,
-    height: 50,
+  photoContainer: {
+    marginBottom: 20
+  },
+  buttonReady: {
+    width: 200,
+    height: 40,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 10,
     marginRight: 10,
     marginBottom: 10,
-    backgroundColor: 'gray'
+    backgroundColor: '#4968A6',
+    elevation: 1
+  },
+  buttonCamera: {
+    width: 200,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 10,
+    marginRight: 10,
+    marginBottom: 10,
+    backgroundColor: '#F2C53D',
+    elevation: 1
+  },
+  buttonGallery: {
+    width: 200,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 10,
+    marginRight: 10,
+    marginBottom: 10,
+    backgroundColor: '#14A647',
+    elevation: 1
+  },
+  buttonText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'white'
   },
   title: {
     color: '#2c2c2c',

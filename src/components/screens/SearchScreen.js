@@ -5,6 +5,7 @@ import { View, Text, TextInput, Image, TouchableOpacity, StyleSheet } from 'reac
 import axios from 'axios';
 
 import { setSearchKeyword, setSearchResults } from '../../actions';
+import { IP_ADDRESS, ACCESS_TOKEN } from '../../constants/config';
 import Header from '../layouts/Header';
 
 const Results = ({ users, navigation }) => {
@@ -45,7 +46,7 @@ const SearchScreen = props => {
     handleChange(value);
     axios({
       method: 'get',
-      url: `http://192.168.0.136:3000/api/users/search`,
+      url: `${IP_ADDRESS}/api/users/search`,
       params: { keyword: keyword }
     })
     .then(response => {

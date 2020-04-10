@@ -1,20 +1,38 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { View, Text, Image, StyleSheet } from 'react-native';
 
+import axios from 'axios';
+
 import Header from '../layouts/Header';
+import { IP_ADDRESS, ACCESS_TOKEN } from '../../constants/config';
 
 const Photos = photos => {
   return (
     <View style={styles.photoContainer}>
       {photos.length && photos.map(photo => {
-        <Image style={{ width: 50, height: 50 }} source={{ uri: photo.image_url }} />
+        <Image style={styles.photo} source={{ uri: photo.image_url }} />
       })}
     </View>
   );
 };
 
 function MypageScreen ({ user, navigation }) {
+
+  useEffect(() => {
+    axios({
+      method: 'get',
+      url: `${IP_ADDRESS}/api/users/${user._id}/photos`
+    })
+    .then(response => {
+      console.log("success", response.data);
+    })
+    .catch(error => {
+      console.log("error", error);
+      alert("failed!");
+    });
+  }, []);
+
   return (
     <View style={styles.container}>
       <Header name={user.user_id} navigation={navigation} />
@@ -84,5 +102,9 @@ const styles = StyleSheet.create({
   },
   followBox: {
     justifyContent: 'center',
+  },
+  photo: {
+    width: 100,
+    height: 100
   }
 });

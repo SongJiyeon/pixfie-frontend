@@ -10,7 +10,7 @@ import { setPhoto } from '../../actions/index';
 
 import Header from '../layouts/Header';
 
-function HomeScreen ({ setPhoto, navigation }) {
+function HomeScreen ({ loggedIn, setPhoto, navigation }) {
   const [fontsLoaded] = useFonts({
     'slkscr': require('../../../android/app/src/main/assets/fonts/slkscr.ttf'),
   });
@@ -29,6 +29,12 @@ function HomeScreen ({ setPhoto, navigation }) {
   };
 
   const openCamera = async () => {
+
+    if (!loggedIn.status) {
+      alert('로그인이 필요한 서비스입니다');
+      return navigation.navigate('Login');
+    }
+
     let result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -43,6 +49,12 @@ function HomeScreen ({ setPhoto, navigation }) {
   };
   
   const pickImage = async () => {
+
+    if (!loggedIn.status) {
+      alert('로그인이 필요한 서비스입니다');
+      return navigation.navigate('Login');
+    }
+
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -69,6 +81,9 @@ function HomeScreen ({ setPhoto, navigation }) {
         <TouchableOpacity style={styles.button} onPress={pickImage}>
           <Text style={styles.buttonText}>사진 가져오기</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Edit')}>
+          <Text style={styles.buttonText}>사진 편집</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -76,6 +91,7 @@ function HomeScreen ({ setPhoto, navigation }) {
 
 const mapStateToProps = state => {
   return {
+    loggedIn: state.loggedIn,
     photo: state.photo
   };
 };

@@ -41,3 +41,10 @@ export const setLoggedIn = loggedIn => {
     loggedIn
   };
 };
+
+export const setFaceLandmarks = faceLandmarks => {
+  return {
+    type: types.SET_FACE_LANDMARKS,
+    faceLandmarks
+  };
+};

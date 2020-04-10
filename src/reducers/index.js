@@ -72,11 +72,21 @@ const loggedIn = (state = initialLoggedIn, action) => {
   };
 };
 
+const faceLandmarks = (state = {}, action) => {
+  switch(action.type) {
+    case types.SET_FACE_DATA:
+      return action.faceLandmarks;
+    default:
+      return state;
+  };
+};
+
 export default combineReducers({
   photo,
   signupInfo,
   loginInfo,
   keyword,
   users,
-  loggedIn
+  loggedIn,
+  faceLandmarks
 });

@@ -15,8 +15,11 @@ import LoginScreen from '../components/screens/LoginScreen';
 import SignupScreen from '../components/screens/SignupScreen';
 import MypageScreen from '../components/screens/MypageScreen';
 import UserpageScreen from '../components/screens/UserpageScreen';
+import EditScreen from '../components/screens/EditScreen';
+import ResultScreen from '../components/screens/ResultScreen';
 
 import { setLoggedIn } from '../actions/index';
+import { IP_ADDRESS } from '../constants/config';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -31,6 +34,8 @@ function Home() {
       <Stack.Screen name="Mypage" component={MypageScreen} />
       <Stack.Screen name="Userpage" component={UserpageScreen} />
       <Stack.Screen name="Ready" component={ReadyScreen} />
+      <Stack.Screen name="Edit" component={EditScreen} />
+      <Stack.Screen name="Result" component={ResultScreen} />
     </Stack.Navigator>
   );
 };
@@ -44,11 +49,11 @@ const MyDrawer = ({ loggedIn, handleSubmit }) => {
   const handleLogout = () => {
     axios({
       method: 'get',
-      url: 'http://192.168.0.136:3000/api/auth/logout'
+      url: `${IP_ADDRESS}/api/auth/logout`
     })
     .then(response => {
       console.log("upload success", response.data);
-      handleSubmit(false);
+      handleSubmit(false, {});
     })
     .catch(error => {
       console.log("upload error", error);
@@ -95,8 +100,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    handleSubmit(state) {
-      dispatch(setLoggedIn(state));
+    handleSubmit(status, user) {
+      dispatch(setLoggedIn({ status, user }));
     }
   };
 };
@@ -112,8 +117,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   profileImage: {
-    width: 80,
-    height: 80,
+    width: 90,
+    height: 90,
+    borderRadius: 90 / 2,
+    borderColor: 'gray',
+    borderWidth: 3,
     marginBottom: 20
   },
   userId: {
