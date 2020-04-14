@@ -5,7 +5,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-nativ
 
 import axios from 'axios';
 
-import { setLoginInfo, setLoggedIn } from '../../actions/index';
+import { setLoginInfo, setLoggedIn, setUserPortraits } from '../../actions/index';
 import { IP_ADDRESS, ACCESS_TOKEN } from '../../constants/config';
 
 function LoginScreen ({ loginInfo, handleChange, handleSubmit, navigation }) {
@@ -17,12 +17,12 @@ function LoginScreen ({ loginInfo, handleChange, handleSubmit, navigation }) {
       data: { ...loginInfo }
     })
     .then(response => {
-      const { user, token } = response.data;
+      const { user, token, photos } = response.data;
       
       alert("반갑습니다");
 
       SecureStore.setItemAsync(ACCESS_TOKEN, token);
-      handleSubmit(true, user);
+      handleSubmit(true, user, photos);
 
       navigation.navigate('Home');
     })
@@ -69,9 +69,10 @@ const mapDispatchToProps = dispatch => {
     handleChange(info, value) {
       dispatch(setLoginInfo({ [info]: value }));
     },
-    handleSubmit(status, user) {
+    handleSubmit(status, user, photos) {
       dispatch(setLoginInfo({ user_id: '', password: '' }));
       dispatch(setLoggedIn({ status, user }));
+      dispatch(setUserPortraits(photos));
     }
   };
 };

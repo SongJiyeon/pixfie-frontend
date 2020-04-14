@@ -11,6 +11,7 @@ import { IP_ADDRESS } from '../../constants/config';
 function ReadyScreen ({ loggedIn, photoUrl, setPhoto, setFaceLandmarks, navigation }) {
 
   const fetchImage = async () => {
+    console.log('Ready photo: ' + photoUrl);
     const photo = {
       uri: photoUrl,
       name: 'new-photo.jpg',

@@ -35,6 +35,13 @@ export const setSearchResults = users => {
   };
 };
 
+export const setSearchedUser = user => {
+  return {
+    type: types.SET_SEARCHED_USER,
+    user
+  };
+};
+
 export const setLoggedIn = loggedIn => {
   return {
     type: types.SET_LOGGED_IN,
@@ -42,9 +49,23 @@ export const setLoggedIn = loggedIn => {
   };
 };
 
+export const setUserPortraits = userPortraits => {
+  return {
+    type: types.SET_USER_PORTRAITS,
+    userPortraits
+  };
+};
+
 export const setFaceLandmarks = faceLandmarks => {
   return {
     type: types.SET_FACE_LANDMARKS,
     faceLandmarks
+  };
+};
+
+export const setDropdownStatus = dropdownStatus => {
+  return {
+    type: types.SET_DROPDOWN_STATUS,
+    dropdownStatus
   };
 };

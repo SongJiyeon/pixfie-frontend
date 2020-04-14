@@ -3,56 +3,56 @@ import { connect } from 'react-redux';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Canvas from 'react-native-canvas';
 
+import axios from 'axios';
+
 import Header from '../layouts/Header';
-import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../../constants/canvas';
-import * as pixel from '../../constants/faceCanvas';
+import { handleCanvas } from '../../utils/index';
+import { setPortraitUrl } from '../../actions/index';
+import { IP_ADDRESS } from '../../constants/config';
 
-function EditScreen ({ navigation }) {
+function ResultScreen ({ navigation, loggedIn }) {
 
-  const handleCanvas = canvas => {
-    canvas.width = CANVAS_WIDTH;
-    canvas.height = CANVAS_HEIGHT;
+  const faceType = {
+    face: 1,
+    eyebrows: 1,
+    eyeshadow: 1,
+    nose: 1,
+    mouth: 1
+  };
 
-    const ctx = canvas.getContext('2d');
-
-    const imgObj = {
-      name: 'face',
-      colors: {
-        face: '#F3B780',
-        faceShadow: '#ee8862',
-        teal:  'rgb(175, 218, 214)',
-        black: 'rgb(0,0,0)'
-      },
-      layers: [
-        ...pixel.face('face'),
-        ...pixel.faceShadow('faceShadow'),
-        ...pixel.eyebrows('black'),
-        ...pixel.eyes('black'),
-        ...pixel.eyeShadow('faceShadow'),
-        ...pixel.nose('black'),
-        ...pixel.mouth('black')
-      ]
-    };
-
-    function draw(img, x, y) {
-      for (var i = 0; i < img.layers.length; i++) {
-        var data = img.layers[i];
-        var loc  = {
-              x: (x||0) + data.x,
-              y: (y||0) + data.y
-            };
-        ctx.fillStyle = img.colors[data.color];
-        ctx.fillRect(loc.x, loc.y, data.width, data.height);
-      }
-    }
-    draw(imgObj);
-  }
+  const savePortrait = () => {
+    axios({
+      method: 'post',
+      url: `${IP_ADDRESS}/api/users/${loggedIn.user._id}/portraits`,
+      data: faceType
+    })
+    .then(response => {
+      alert('저장 성공!');
+      navigation.navigate('Home');
+    })
+    .catch(error => {
+      console.log("error", error);
+      alert("failed!");
+    });
+    axios.post(`${IP_ADDRESS}/api/users/${loggedIn.user._id}/portraits`,
+    data,
+    )
+    .then(response => {
+      alert('저장 성공!');
+      navigation.navigate('Home');
+    })
+    .catch(error => {
+      console.log('error', error);
+    });
+  };
   
   return (
     <View style={styles.container}>
       <Header name="Edit" navigation={navigation} />
-      <Canvas style={styles.canvas} ref={handleCanvas}/> 
-      <TouchableOpacity style={styles.button}>
+      <ViewShot style={styles.viewShot} ref={viewRef} options={{ format: "jpg", quality: 0.9 }}>
+        <Canvas style={styles.canvas} ref={handleCanvas} /> 
+      </ViewShot>
+      <TouchableOpacity style={styles.button} onPress={savePortrait}>
         <Text style={styles.buttonText}>픽셀 프로필 저장</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={() => {navigation.navigate('Home')}}>
@@ -64,17 +64,18 @@ function EditScreen ({ navigation }) {
 
 const mapStateToProps = state => {
   return {
-    user: state.loggedIn.user
+    loggedIn: state.loggedIn,
+    portraitUrl: state.portraitUrl
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    setPhoto: photo => { dispatch(setPhoto(photo)); }
+    setPortraitUrl: url => { dispatch(setPortraitUrl(url)); }
   };
 };
 
-export default connect(mapStateToProps, null)(EditScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(ResultScreen);
 
 const styles = StyleSheet.create({
   container: {
@@ -84,6 +85,7 @@ const styles = StyleSheet.create({
   },
   canvas: {
     borderColor: 'gray',
+    backgroundColor: 'white',
     borderWidth: 1
   },
   button: {

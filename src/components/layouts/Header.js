@@ -8,7 +8,7 @@ export default function Header ({name, navigation}) {
     <TouchableOpacity onPress={() => navigation.openDrawer()}>
       <Ionicons name="ios-menu" size={32} />
     </TouchableOpacity>
-    <Text>{name}</Text>
+    <Text style={styles.headerName}>{name}</Text>
     <TouchableOpacity onPress={() => navigation.navigate('Search')}>
       <Ionicons name="ios-search" size={32} color="black" style={{marginRight: 10}} />
     </TouchableOpacity>
@@ -25,5 +25,8 @@ const styles = StyleSheet.create({
     justifyContent:"space-between",
     alignItems:"center",
     paddingHorizontal:20,
+  },
+  headerName: {
+    fontSize: 20
   }
 });

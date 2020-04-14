@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
   title: {
     color: '#2c2c2c',
     fontSize: 70,
-    marginTop: '45%',
+    marginTop: '35%',
     marginBottom: 30,
     fontWeight: '300',
     fontFamily: 'slkscr',

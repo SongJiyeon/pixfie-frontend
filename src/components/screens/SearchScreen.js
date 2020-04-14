@@ -4,16 +4,15 @@ import { View, Text, TextInput, Image, TouchableOpacity, StyleSheet } from 'reac
 
 import axios from 'axios';
 
-import { setSearchKeyword, setSearchResults } from '../../actions';
+import { setSearchKeyword, setSearchResults, setSearchedUser } from '../../actions';
 import { IP_ADDRESS, ACCESS_TOKEN } from '../../constants/config';
 import Header from '../layouts/Header';
 
-const Results = ({ users, navigation }) => {
+const Results = ({ users, setSearchedUser, navigation }) => {
 
   const handlePress = user => {
-    navigation.navigate('Userpage', {
-      user
-    });
+    setSearchedUser(user);
+    navigation.navigate('Userpage');
   };
 
   return (
@@ -36,7 +35,7 @@ const Results = ({ users, navigation }) => {
 };
 
 const SearchScreen = props => {
-  const { navigation, keyword, users, handleChange, setSearchResults, clearStates } = props;
+  const { navigation, keyword, loggedIn, users, handleChange, setSearchResults, setSearchedUser, clearStates } = props;
 
   useEffect(() => {
     clearStates();
@@ -46,7 +45,7 @@ const SearchScreen = props => {
     handleChange(value);
     axios({
       method: 'get',
-      url: `${IP_ADDRESS}/api/users/search`,
+      url: `${IP_ADDRESS}/api/users/${loggedIn.user.user_id}/search`,
       params: { keyword: keyword }
     })
     .then(response => {
@@ -65,7 +64,10 @@ const SearchScreen = props => {
         placeholder="아이디/이름 검색"
         onChangeText={value => onChangeText(value)}
         value={keyword} />
-      <Results users={users} navigation={navigation} />
+      <Results
+        users={users}
+        setSearchedUser={setSearchedUser}
+        navigation={navigation} />
     </View>
   );
 };
@@ -73,18 +75,16 @@ const SearchScreen = props => {
 const mapStateToProps = state => {
   return {
     keyword: state.keyword,
+    loggedIn: state.loggedIn,
     users: state.users
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    handleChange(value) {
-      dispatch(setSearchKeyword(value));
-    },
-    setSearchResults(result) {
-      dispatch(setSearchResults(result));
-    },
+    handleChange(value) { dispatch(setSearchKeyword(value)); },
+    setSearchedUser(user) { dispatch(setSearchedUser(user)) },
+    setSearchResults(result) { dispatch(setSearchResults(result)); },
     clearStates() {
       dispatch(setSearchKeyword(''));
       dispatch(setSearchResults([]));

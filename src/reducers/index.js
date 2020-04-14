@@ -58,6 +58,25 @@ const users = (state = [], action) => {
   };
 };
 
+const initialSearchedUser = {
+  _id: '',
+  user_id: '',
+  user_name: '',
+  profile_url: '',
+  photos: [],
+  followers: [],
+  followings: []
+};
+
+const searchedUser = (state = initialSearchedUser, action) => {
+  switch(action.type) {
+    case types.SET_SEARCHED_USER:
+      return action.user;
+    default:
+      return state;
+  };
+};
+
 const initialLoggedIn = {
   status: false,
   user: {}
@@ -72,10 +91,34 @@ const loggedIn = (state = initialLoggedIn, action) => {
   };
 };
 
+const userPortraits = (state = [], action) => {
+  switch(action.type) {
+    case types.SET_USER_PORTRAITS:
+      return action.userPortraits;
+    default:
+      return state;
+  };
+};
+
 const faceLandmarks = (state = {}, action) => {
   switch(action.type) {
     case types.SET_FACE_DATA:
       return action.faceLandmarks;
+    default:
+      return state;
+  };
+};
+
+const initialDropdownStatus = {
+  status: false,
+  position: {},
+  item: {}
+};
+
+const dropdownStatus = (state = initialDropdownStatus, action) => {
+  switch(action.type) {
+    case types.SET_DROPDOWN_STATUS:
+      return action.dropdownStatus;
     default:
       return state;
   };
@@ -87,6 +130,9 @@ export default combineReducers({
   loginInfo,
   keyword,
   users,
+  searchedUser,
   loggedIn,
-  faceLandmarks
+  userPortraits,
+  faceLandmarks,
+  dropdownStatus
 });
