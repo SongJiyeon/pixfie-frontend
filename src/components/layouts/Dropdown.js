@@ -10,7 +10,7 @@ function DropDown ({ dropdown, hide, navigation }) {
       <TouchableWithoutFeedback onPress={hide}>
         <View style={styles.container}>
           <View style={styles.dropdownContainer}>
-            <TouchableOpacity style={{width, alignItems: 'center', paddingTop: 5}} onPress={() => hide('Edit')}>
+            <TouchableOpacity style={{width, alignItems: 'center', paddingTop: 5}} onPress={() => hide('Edit', dropdown.item)}>
               <Text>Edit</Text>
             </TouchableOpacity>
             <TouchableOpacity style={{width, alignItems: 'center', paddingTop: 5}} onPress={() => hide('Delete', dropdown.item)}>

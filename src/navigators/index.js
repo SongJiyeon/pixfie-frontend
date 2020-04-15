@@ -20,41 +20,9 @@ import EditScreen from '../components/screens/EditScreen';
 import ResultScreen from '../components/screens/ResultScreen';
 
 import { setLoggedIn } from '../actions/index';
-import { IP_ADDRESS } from '../constants/config';
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
-
-function IconWithBadge({ name, badgeCount, color, size }) {
-  return (
-    <View style={{ width: 24, height: 24, margin: 5 }}>
-      <Ionicons name={name} size={size} color={color} />
-      {badgeCount > 0 && (
-        <View
-          style={{
-            position: 'absolute',
-            right: -6,
-            top: -3,
-            backgroundColor: 'red',
-            borderRadius: 6,
-            width: 12,
-            height: 12,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <Text style={{ color: 'white', fontSize: 10, fontWeight: 'bold' }}>
-            {badgeCount}
-          </Text>
-        </View>
-      )}
-    </View>
-  );
-}
-
-function HomeIconWithBadge(props) {
-  return <IconWithBadge {...props} badgeCount={3} />;
-}
 
 function Home() {
   return (

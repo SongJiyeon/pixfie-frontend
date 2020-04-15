@@ -100,10 +100,46 @@ const userPortraits = (state = [], action) => {
   };
 };
 
-const faceLandmarks = (state = {}, action) => {
+const initialFaceType = {
+  face: 0,
+  eyebrows: 0,
+  eyes: 0,
+  nose: 0,
+  lip: 0
+};
+
+const faceType = (state = initialFaceType, action) => {
   switch(action.type) {
-    case types.SET_FACE_DATA:
-      return action.faceLandmarks;
+    case types.SET_FACE_TYPE:
+      return action.faceType;
+    default:
+      return state;
+  };
+};
+
+const initialOptionTheme = {
+  name: 'face color',
+  id: 'faceColor',
+  options: [
+    ['#FFDBAC', '#ee8862'],
+    ['#F3B780', '#ee8862'], 
+    ['#8D5524', '#30150e']
+  ]
+};;
+
+const optionTheme = (state = initialOptionTheme, action) => {
+  switch(action.type) {
+    case types.SET_OPTION_THEME:
+      return action.optionTheme;
+    default:
+      return state;
+  };
+};
+
+const currentOption = (state = 0, action) => {
+  switch(action.type) {
+    case types.SET_CURRENT_OPTION:
+      return action.currentOption;
     default:
       return state;
   };
@@ -133,6 +169,8 @@ export default combineReducers({
   searchedUser,
   loggedIn,
   userPortraits,
-  faceLandmarks,
+  faceType,
+  optionTheme,
+  currentOption,
   dropdownStatus
 });

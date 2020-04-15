@@ -5,10 +5,11 @@ import * as ImagePicker from 'expo-image-picker';
 
 import axios from 'axios';
 
-import { setPhoto, setFaceLandmarks } from '../../actions/index';
+import { setPhoto, setFaceType } from '../../actions/index';
+import { generateFaceType } from '../../utils/index';
 import { IP_ADDRESS } from '../../constants/config';
 
-function ReadyScreen ({ loggedIn, photoUrl, setPhoto, setFaceLandmarks, navigation }) {
+function ReadyScreen ({ loggedIn, photoUrl, setPhoto, setFaceType, navigation }) {
 
   const fetchImage = async () => {
     console.log('Ready photo: ' + photoUrl);
@@ -27,7 +28,7 @@ function ReadyScreen ({ loggedIn, photoUrl, setPhoto, setFaceLandmarks, navigati
       }
     })
     .then(response => {
-      setFaceLandmarks(response.data);
+      setFaceType(generateFaceType(response.data));
       navigation.navigate('Result');
     })
     .catch(error => {
@@ -92,7 +93,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     setPhoto: photo => { dispatch(setPhoto(photo)); },
-    setFaceLandmarks: result => { dispatch(setFaceLandmarks(result)); }
+    setFaceType: faceType => { dispatch(setFaceType(faceType)); }
   };
 };
 

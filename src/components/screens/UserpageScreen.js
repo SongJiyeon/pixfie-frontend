@@ -40,11 +40,9 @@ function UserpageScreen ({ loggedIn, searchedUser, setSearchedUser,  userPortrai
         url: `${IP_ADDRESS}/api/users/${user._id}/photos`
       })
       .then(response => {
-        console.log('success');
         setUserPortraits(response.data.photos);
       })
       .catch(error => {
-        console.log("error", error);
         alert("failed!");
       });
     });
@@ -63,7 +61,7 @@ function UserpageScreen ({ loggedIn, searchedUser, setSearchedUser,  userPortrai
           <Text style={styles.photoTitle}>{item.like_users.length} likes</Text>
         </View>
         <DoubleTapButton onDoubleTap={() => handleDoubletap(item)}>
-          <Canvas style={styles.canvas} ref={handleCanvas}  />
+          <Canvas style={styles.canvas} ref={canvas => handleCanvas(canvas, item.faceType)}  />
         </DoubleTapButton>
       </View>
     );

@@ -56,10 +56,24 @@ export const setUserPortraits = userPortraits => {
   };
 };
 
-export const setFaceLandmarks = faceLandmarks => {
+export const setFaceType = faceType => {
   return {
-    type: types.SET_FACE_LANDMARKS,
-    faceLandmarks
+    type: types.SET_FACE_TYPE,
+    faceType
+  };
+};
+
+export const setOptionTheme = optionTheme => {
+  return {
+    type: types.SET_OPTION_THEME,
+    optionTheme
+  };
+};
+
+export const setCurrentOption = currentOption => {
+  return {
+    type: types.SET_CURRENT_OPTION,
+    currentOption
   };
 };
 

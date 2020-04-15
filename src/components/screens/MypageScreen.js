@@ -22,7 +22,6 @@ function MypageScreen ({ loggedIn, userPortraits, setUserPortraits, setDropdownS
         url: `${IP_ADDRESS}/api/users/${user._id}/photos`
       })
       .then(response => {
-        console.log('success');
         setUserPortraits(response.data.photos);
       })
       .catch(error => {
@@ -39,9 +38,10 @@ function MypageScreen ({ loggedIn, userPortraits, setUserPortraits, setDropdownS
 
   const hideDropdown = (mode, item) => {
     setDropdownStatus({ status: false, position: {}, item: {} });
+    console.log(item);
     switch(mode) {
       case 'Edit':
-        return navigation.navigate('Edit');
+        return navigation.navigate('Edit', { portrait: item });
       case 'Delete':
         return axios({
           method: 'delete',
@@ -68,7 +68,7 @@ function MypageScreen ({ loggedIn, userPortraits, setUserPortraits, setDropdownS
             <Entypo name="dots-three-vertical" size={20} color="gray" />
           </TouchableOpacity>
         </View>
-        <Canvas style={styles.canvas} ref={handleCanvas}  />
+        <Canvas style={styles.canvas} ref={canvas => handleCanvas(canvas, item.faceType)}  />
       </View>
     );
   };
