@@ -25,6 +25,7 @@
     "react-dom": "~16.9.0",
     "react-native": "~0.61.4",
     "react-native-canvas": "^0.1.37",
+    "react-native-double-tap": "^1.0.1",
     "react-native-gesture-handler": "^1.6.1",
     "react-native-reanimated": "^1.7.1",
     "react-native-safe-area-context": "^0.7.3",

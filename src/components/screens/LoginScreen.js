@@ -8,7 +8,7 @@ import axios from 'axios';
 import { setLoginInfo, setLoggedIn, setUserPortraits } from '../../actions/index';
 import { IP_ADDRESS, ACCESS_TOKEN } from '../../constants/config';
 
-function LoginScreen ({ loginInfo, handleChange, handleSubmit, navigation }) {
+export function LoginScreen ({ loginInfo, handleChange, handleSubmit, navigation }) {
 
   const logIn = () => {
     axios({

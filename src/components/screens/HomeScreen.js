@@ -1,16 +1,17 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import * as Permissions from 'expo-permissions';
+
+import { AppLoading } from 'expo';
 import Constants from 'expo-constants';
 import { useFonts } from '@use-expo/font';
-import { AppLoading } from 'expo';
-import { setPhoto } from '../../actions/index';
+import * as ImagePicker from 'expo-image-picker';
+import * as Permissions from 'expo-permissions';
 
 import Header from '../layouts/Header';
+import { setPhoto } from '../../actions/index';
 
-function HomeScreen ({ loggedIn, setPhoto, navigation }) {
+export function HomeScreen ({ loggedIn, setPhoto, navigation }) {
   const [fontsLoaded] = useFonts({
     'slkscr': require('../../../android/app/src/main/assets/fonts/slkscr.ttf'),
   });
@@ -91,8 +92,7 @@ function HomeScreen ({ loggedIn, setPhoto, navigation }) {
 
 const mapStateToProps = state => {
   return {
-    loggedIn: state.loggedIn,
-    photo: state.photo
+    loggedIn: state.loggedIn
   };
 };
 

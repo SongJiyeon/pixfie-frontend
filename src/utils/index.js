@@ -88,3 +88,11 @@ export const handleCanvas = (canvas, faceType) => {
     draw(imgObj);
   }
 };
+
+export const carouselHandler = (direction, optionTheme, option) => {
+  if (direction === 'left') {
+    return !option ? optionTheme.options.length - 1 : option - 1;
+  } else {
+    return option === optionTheme.options.length - 1 ? 0 : option + 1;
+  }
+};

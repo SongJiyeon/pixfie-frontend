@@ -1,19 +1,24 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import Entypo from '@expo/vector-icons/Entypo'
+import { Ionicons } from '@expo/vector-icons';
 import Canvas from 'react-native-canvas';
+import DoubleClick from 'react-native-double-tap';
 import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet } from 'react-native';
 
 import axios from 'axios';
 
 import Header from '../layouts/Header';
 import DropDown from '../layouts/Dropdown';
+import { handleFollow, deletePortrait } from '../../utils/api';
 import { handleCanvas } from '../../utils/index';
 import { IP_ADDRESS } from '../../constants/config';
-import { setLoggedIn, setUserPortraits, setDropdownStatus } from '../../actions';
+import { setLoggedIn, setUserPortraits, setDropdownStatus, setSearchedUser } from '../../actions';
 
-function MypageScreen ({ loggedIn, userPortraits, setUserPortraits, setDropdownStatus, navigation }) {
-  const user = loggedIn.user;
+export function MypageScreen ({ loggedIn, searchedUser, setSearchedUser, userPortraits, setUserPortraits, setDropdownStatus, route, navigation }) {
+  const isMypage = !route.params;
+  const user = isMypage ? loggedIn.user : searchedUser;
+  const isFollowing = user.followers.includes(loggedIn.user._id);
 
   useEffect(() => {
     const getPhotos = navigation.addListener('focus', () => {
@@ -32,43 +37,61 @@ function MypageScreen ({ loggedIn, userPortraits, setUserPortraits, setDropdownS
     return getPhotos;
   }, [navigation]);
 
-  const showDropdown = item => {
-    setDropdownStatus({ status: true, position: {}, item });
-  };
-
   const hideDropdown = (mode, item) => {
     setDropdownStatus({ status: false, position: {}, item: {} });
-    console.log(item);
+    
     switch(mode) {
       case 'Edit':
         return navigation.navigate('Edit', { portrait: item });
       case 'Delete':
-        return axios({
-          method: 'delete',
-          url: `${IP_ADDRESS}/api/users/${user._id}/portraits`,
-          data: { portrait_id: item._id }
-        })
-        .then(response => {
-          console.log('success');
-          setUserPortraits(response.data.photos);
-        })
-        .catch(error => {
-          console.log("error", error);
-          alert("failed!");
-        });
+        return deletePortrait(item, user, setUserPortraits);
     };
   };
 
   const renderPhotos = item => {
+    const isLiked = item.like_users.includes(loggedIn.user._id);
+
+    const handleDoubletap = () => {
+      const uri = item.like_users.includes(loggedIn.user._id) ? 'unlike' : 'like';
+      axios({
+        method: 'put',
+        url: `${IP_ADDRESS}/api/users/${loggedIn.user._id}/${uri}/${item._id}`,
+        data: { owner_id: user._id }
+      })
+      .then(response => {
+        setUserPortraits(response.data.photos);
+      })
+      .catch(error => {
+        alert("Upload failed!");
+      });
+    };
+
     return (
       <View style={styles.photoContainer}>
         <View style={styles.photoHeader}>
+          <Ionicons
+            name={isLiked ? "md-heart" : "md-heart-empty"}
+            size={32}
+            color={isLiked ? "tomato" : "gray"} />
           <Text style={styles.photoTitle}>{item.like_users.length} likes</Text>
-          <TouchableOpacity style={styles.photoMenuButton} ref={item.ref} onPress={() => showDropdown(item)}>
-            <Entypo name="dots-three-vertical" size={20} color="gray" />
-          </TouchableOpacity>
+          {isMypage && (
+          <>
+            <TouchableOpacity
+              style={styles.photoMenuButton}
+              ref={item.ref}
+              onPress={() => setDropdownStatus({ status: true, position: {}, item })}>
+              <Entypo name="dots-three-vertical" size={20} color="gray" />
+            </TouchableOpacity>
+          </>
+          )}
         </View>
-        <Canvas style={styles.canvas} ref={canvas => handleCanvas(canvas, item.faceType)}  />
+        {isMypage ?
+          <Canvas style={styles.canvas} ref={canvas => handleCanvas(canvas, item.faceType)} />
+          : (
+          <DoubleClick doubleTap={handleDoubletap}>
+            <Canvas style={styles.canvas} ref={canvas => handleCanvas(canvas, item.faceType)} />
+          </DoubleClick>)
+        }
       </View>
     );
   };
@@ -83,14 +106,22 @@ function MypageScreen ({ loggedIn, userPortraits, setUserPortraits, setDropdownS
           <Text style={styles.userName}>{user.user_name}</Text>
         </View>
         <View style={styles.followContainer}>
-          <View style={styles.followBox}>
-            <Text style={styles.follow}>{user.followers.length}</Text>
-            <Text style={styles.followTitle}>팔로워</Text>
+          <View style={styles.followCounts}>
+            <View style={styles.followBox}>
+              <Text style={styles.follow}>{user.followers.length}</Text>
+              <Text style={styles.followTitle}>팔로워</Text>
+            </View>
+            <View style={styles.followBox}>
+              <Text style={styles.follow}>{user.followings.length}</Text>
+              <Text style={styles.followTitle}>팔로잉</Text>
+            </View>
           </View>
-          <View style={styles.followBox}>
-            <Text style={styles.follow}>{user.followings.length}</Text>
-            <Text style={styles.followTitle}>팔로잉</Text>
-          </View>
+          {!isMypage && (
+          <TouchableOpacity
+          style={isFollowing ? styles.unfollowButton : styles.followButton}
+          onPress={() => handleFollow(loggedIn, user, setSearchedUser)}>
+            <Text style={styles.followButtonTitle}>{isFollowing ? "언팔로우" : "팔로우"}</Text>
+          </TouchableOpacity>)}
         </View>
       </View>
       {userPortraits.length !== 0 &&
@@ -109,6 +140,7 @@ function MypageScreen ({ loggedIn, userPortraits, setUserPortraits, setDropdownS
 const mapStateToProps = state => {
   return {
     loggedIn: state.loggedIn,
+    searchedUser: state.searchedUser,
     dropdownStatus: state.dropdownStatus,
     userPortraits: state.userPortraits
   };
@@ -118,7 +150,8 @@ const mapDispatchToProps = dispatch => {
   return {
     setLoggedIn: user => { dispatch(setLoggedIn(true, user)); },
     setUserPortraits: portraits => { dispatch(setUserPortraits(portraits)); },
-    setDropdownStatus: status => { dispatch(setDropdownStatus(status)); }
+    setDropdownStatus: status => { dispatch(setDropdownStatus(status)); },
+    setSearchedUser: user => { dispatch(setSearchedUser(user)); },
   };
 };
 
@@ -157,7 +190,11 @@ const styles = StyleSheet.create({
     fontSize: 30
   },
   followContainer: {
+    marginTop: 10
+  },
+  followCounts: {
     flexDirection: 'row',
+    marginBottom: 5
   },
   followBox: {
     justifyContent: 'center',
@@ -171,15 +208,31 @@ const styles = StyleSheet.create({
   followTitle: {
     textAlign: 'center'
   },
+  followButton: {
+    width: 105,
+    height: 25,
+    justifyContent: 'center',
+    backgroundColor: '#4968A6'
+  },
+  unfollowButton: {
+    width: 105,
+    height: 25,
+    justifyContent: 'center',
+    backgroundColor: '#D9843B'
+  },
+  followButtonTitle: {
+    textAlign: 'center',
+    color: 'white'
+  },
   photoContainer: {
     alignItems: 'center',
+    marginBottom: 10,
   },
   photoHeader: {
     flexDirection: 'row',
     width: 300,
     height: 50,
     alignItems: 'center',
-    // justifyContent: 'flex-start',
     paddingLeft: 10,
     paddingTop: 10
   },

@@ -1,13 +1,13 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
 
-import { HomeScreen } from '../src/components/screens/HomeScreen';
+import { MypageScreen } from '../src/components/screens/MypageScreen';
 
 jest.useFakeTimers();
 
-describe('<HomeScreen />', () => {
+describe('<MypageScreen />', () => {
   it('renders correctly', () => {
-    const tree = renderer.create(<HomeScreen />).toJSON();
+    const tree = renderer.create(<MypageScreen />).toJSON();
     expect(tree).toMatchSnapshot();
   });
 });

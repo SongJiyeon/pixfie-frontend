@@ -12,7 +12,7 @@ const Results = ({ users, setSearchedUser, navigation }) => {
 
   const handlePress = user => {
     setSearchedUser(user);
-    navigation.navigate('Userpage');
+    navigation.navigate('Mypage', { user });
   };
 
   return (

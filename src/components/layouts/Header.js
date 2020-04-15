@@ -9,9 +9,6 @@ export default function Header ({name, navigation}) {
       <Ionicons name="ios-menu" size={32} />
     </TouchableOpacity>
     <Text style={styles.headerName}>{name}</Text>
-    <TouchableOpacity onPress={() => navigation.navigate('Search')}>
-      <Ionicons name="ios-search" size={32} color="black" style={{marginRight: 10}} />
-    </TouchableOpacity>
   </View>
   );
 }

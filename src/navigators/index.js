@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
@@ -7,15 +7,12 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 import { Text, View, Image, StyleSheet } from 'react-native';
 
-import axios from 'axios';
-
 import HomeScreen from '../components/screens/HomeScreen';
 import ReadyScreen from '../components/screens/ReadyScreen';
 import SearchScreen from '../components/screens/SearchScreen';
 import LoginScreen from '../components/screens/LoginScreen';
 import SignupScreen from '../components/screens/SignupScreen';
 import MypageScreen from '../components/screens/MypageScreen';
-import UserpageScreen from '../components/screens/UserpageScreen';
 import EditScreen from '../components/screens/EditScreen';
 import ResultScreen from '../components/screens/ResultScreen';
 
@@ -28,11 +25,13 @@ function Home() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
+        tabBarIcon: ({ color, size }) => {
           let iconName;
 
           if (route.name === 'Home') {
             iconName = 'ios-home';
+          } else if (route.name === 'My Page') {
+            iconName = 'md-person'
           } else if (route.name === 'Search') {
             iconName = 'ios-search';
           }
@@ -45,6 +44,7 @@ function Home() {
         inactiveTintColor: 'gray',
       }}>
       <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="My Page" component={MypageScreen} />
       <Tab.Screen name="Search" component={SearchScreen} />
     </Tab.Navigator>
   );
@@ -58,7 +58,6 @@ function HomeStack() {
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Signup" component={SignupScreen} />
       <Stack.Screen name="Mypage" component={MypageScreen} />
-      <Stack.Screen name="Userpage" component={UserpageScreen} />
       <Stack.Screen name="Ready" component={ReadyScreen} />
       <Stack.Screen name="Edit" component={EditScreen} />
       <Stack.Screen name="Result" component={ResultScreen} />
@@ -95,7 +94,6 @@ const MyDrawer = ({ loggedIn, handleSubmit }) => {
       {loggedIn.status ?
       (<Drawer.Navigator drawerContent={props => <CustomDrawerContent {...props} />}>
         <Drawer.Screen name="Home" component={HomeStack} />
-        <Drawer.Screen name="My Page" component={MypageScreen} />
       </Drawer.Navigator>)
       :
       (<Drawer.Navigator>
