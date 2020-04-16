@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow, mount } from 'enzyme';
 
-import { HomeScreen } from '../src/components/screens/HomeScreen';
+import { HomeScreen } from '../../src/components/screens/HomeScreen';
 
 jest.useFakeTimers();
 

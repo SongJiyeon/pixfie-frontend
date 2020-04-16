@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import { SignupScreen } from '../src/components/screens/SignupScreen';
+import { SignupScreen } from '../../src/components/screens/SignupScreen';
 
 jest.useFakeTimers();
 

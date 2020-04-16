@@ -1,36 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import * as SecureStore from 'expo-secure-store';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 
-import axios from 'axios';
-
+import { fetchLogin } from '../../utils/api';
 import { setLoginInfo, setLoggedIn, setUserPortraits } from '../../actions/index';
-import { IP_ADDRESS, ACCESS_TOKEN } from '../../constants/config';
 
 export function LoginScreen ({ loginInfo, handleChange, handleSubmit, navigation }) {
-
-  const logIn = () => {
-    axios({
-      method: 'post',
-      url: `${IP_ADDRESS}/api/auth/login`,
-      data: { ...loginInfo }
-    })
-    .then(response => {
-      const { user, token, photos } = response.data;
-      
-      alert("반갑습니다");
-
-      SecureStore.setItemAsync(ACCESS_TOKEN, token);
-      handleSubmit(true, user, photos);
-
-      navigation.navigate('Home');
-    })
-    .catch(error => {
-      alert("Upload failed!");
-    });
-  };
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>로그인</Text>
@@ -47,7 +22,7 @@ export function LoginScreen ({ loginInfo, handleChange, handleSubmit, navigation
         onChangeText={value => handleChange('password', value)}
         value={loginInfo.password} />
       </View>
-      <TouchableOpacity style={styles.button} onPress={logIn}>
+      <TouchableOpacity style={styles.button} onPress={() => fetchLogin(loginInfo, handleSubmit, navigation)}>
         <Text style={styles.buttonText}>로그인</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Signup')}>

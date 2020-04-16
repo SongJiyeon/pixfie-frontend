@@ -6,13 +6,10 @@ import Canvas from 'react-native-canvas';
 import DoubleClick from 'react-native-double-tap';
 import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet } from 'react-native';
 
-import axios from 'axios';
-
 import Header from '../layouts/Header';
 import DropDown from '../layouts/Dropdown';
-import { handleFollow, deletePortrait } from '../../utils/api';
 import { handleCanvas } from '../../utils/index';
-import { IP_ADDRESS } from '../../constants/config';
+import { fetchUserPortraits, handleFollow, handleDoubletap, deletePortrait } from '../../utils/api';
 import { setLoggedIn, setUserPortraits, setDropdownStatus, setSearchedUser } from '../../actions';
 
 export function MypageScreen ({ loggedIn, searchedUser, setSearchedUser, userPortraits, setUserPortraits, setDropdownStatus, route, navigation }) {
@@ -21,24 +18,13 @@ export function MypageScreen ({ loggedIn, searchedUser, setSearchedUser, userPor
   const isFollowing = isMypage ? false : user.followers.includes(loggedIn.user._id);
 
   useEffect(() => {
-    const getPhotos = navigation.addListener('focus', () => {
-      axios({
-        method: 'get',
-        url: `${IP_ADDRESS}/api/users/${user._id}/photos`
-      })
-      .then(response => {
-        setUserPortraits(response.data.photos);
-      })
-      .catch(error => {
-        console.log("error", error);
-        alert("failed!");
-      });
+    return navigation.addListener('focus', () => {
+      fetchUserPortraits(user, setUserPortraits);
     });
-    return getPhotos;
   }, [navigation]);
 
   const hideDropdown = (mode, item) => {
-    setDropdownStatus({ status: false, position: {}, item: {} });
+    setDropdownStatus({ status: false, item: {} });
     
     switch(mode) {
       case 'Edit':
@@ -50,21 +36,6 @@ export function MypageScreen ({ loggedIn, searchedUser, setSearchedUser, userPor
 
   const renderPhotos = item => {
     const isLiked = item.like_users.includes(loggedIn.user._id);
-
-    const handleDoubletap = () => {
-      const uri = item.like_users.includes(loggedIn.user._id) ? 'unlike' : 'like';
-      axios({
-        method: 'put',
-        url: `${IP_ADDRESS}/api/users/${loggedIn.user._id}/${uri}/${item._id}`,
-        data: { owner_id: user._id }
-      })
-      .then(response => {
-        setUserPortraits(response.data.photos);
-      })
-      .catch(error => {
-        alert("Upload failed!");
-      });
-    };
 
     return (
       <View style={styles.photoContainer}>
@@ -79,7 +50,7 @@ export function MypageScreen ({ loggedIn, searchedUser, setSearchedUser, userPor
             <TouchableOpacity
               style={styles.photoMenuButton}
               ref={item.ref}
-              onPress={() => setDropdownStatus({ status: true, position: {}, item })}>
+              onPress={() => setDropdownStatus({ status: true, item })}>
               <Entypo name="dots-three-vertical" size={20} color="gray" />
             </TouchableOpacity>
           </>
@@ -88,7 +59,7 @@ export function MypageScreen ({ loggedIn, searchedUser, setSearchedUser, userPor
         {isMypage ?
           <Canvas style={styles.canvas} ref={canvas => handleCanvas(canvas, item.faceType)} />
           : (
-          <DoubleClick doubleTap={handleDoubletap}>
+          <DoubleClick doubleTap={() => handleDoubletap(item, loggedIn, user, setUserPortraits)}>
             <Canvas style={styles.canvas} ref={canvas => handleCanvas(canvas, item.faceType)} />
           </DoubleClick>)
         }

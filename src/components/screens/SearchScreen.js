@@ -2,13 +2,11 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { View, Text, TextInput, Image, TouchableOpacity, StyleSheet } from 'react-native';
 
-import axios from 'axios';
-
 import { setSearchKeyword, setSearchResults, setSearchedUser } from '../../actions';
-import { IP_ADDRESS, ACCESS_TOKEN } from '../../constants/config';
+import { fetchKeyword } from '../../utils/api';
 import Header from '../layouts/Header';
 
-const Results = ({ users, setSearchedUser, navigation }) => {
+export const Results = ({ users, setSearchedUser, navigation }) => {
 
   const handlePress = user => {
     setSearchedUser(user);
@@ -34,27 +32,20 @@ const Results = ({ users, setSearchedUser, navigation }) => {
   );
 };
 
-const SearchScreen = props => {
-  const { navigation, keyword, loggedIn, users, handleChange, setSearchResults, setSearchedUser, clearStates } = props;
+export const SearchScreen = props => {
+  const { 
+    keyword, 
+    loggedIn, 
+    users, 
+    setSearchKeyword, 
+    setSearchResults, 
+    setSearchedUser, 
+    clearStates,
+    navigation } = props;
 
   useEffect(() => {
     clearStates();
   }, []);
-
-  const onChangeText = value => {
-    handleChange(value);
-    axios({
-      method: 'get',
-      url: `${IP_ADDRESS}/api/users/${loggedIn.user.user_id}/search`,
-      params: { keyword: keyword }
-    })
-    .then(response => {
-      setSearchResults(response.data);
-    })
-    .catch(error => {
-      alert("Upload failed!");
-    });
-  };
 
   return (
     <View style={styles.container}>
@@ -62,7 +53,7 @@ const SearchScreen = props => {
       <TextInput
         style={styles.inputText}
         placeholder="아이디/이름 검색"
-        onChangeText={value => onChangeText(value)}
+        onChangeText={keyword => fetchKeyword(keyword, loggedIn, setSearchKeyword, setSearchResults)}
         value={keyword} />
       <Results
         users={users}
@@ -82,7 +73,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    handleChange(value) { dispatch(setSearchKeyword(value)); },
+    setSearchKeyword(value) { dispatch(setSearchKeyword(value)); },
     setSearchedUser(user) { dispatch(setSearchedUser(user)) },
     setSearchResults(result) { dispatch(setSearchResults(result)); },
     clearStates() {

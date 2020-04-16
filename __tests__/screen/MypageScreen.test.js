@@ -1,8 +1,8 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import { MypageScreen } from '../src/components/screens/MypageScreen';
-import * as api from '../src/utils/api';
+import { MypageScreen } from '../../src/components/screens/MypageScreen';
+import * as api from '../../src/utils/api';
 
 jest.useFakeTimers();
 

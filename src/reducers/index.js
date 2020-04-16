@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 import * as types from '../constants/actionTypes';
 
-const photo = (state = {}, action) => {
+export const photo = (state = '', action) => {
   switch(action.type) {
     case types.SET_PHOTO:
       return action.photo;
@@ -17,7 +17,7 @@ const initialSignupState = {
   passwordCheck: ''
 };
 
-const signupInfo = (state = initialSignupState, action) => {
+export const signupInfo = (state = initialSignupState, action) => {
   switch(action.type) {
     case types.SET_SIGNUP_INFO:
       return { ...state, ...action.signupInfo };
@@ -31,7 +31,7 @@ const initialLoginState = {
   password: ''
 };
 
-const loginInfo = (state = initialLoginState, action) => {
+export const loginInfo = (state = initialLoginState, action) => {
   switch(action.type) {
     case types.SET_LOGIN_INFO:
       return { ...state, ...action.loginInfo };
@@ -40,7 +40,7 @@ const loginInfo = (state = initialLoginState, action) => {
   };
 };
 
-const keyword = (state = '', action) => {
+export const keyword = (state = '', action) => {
   switch(action.type) {
     case types.SET_SEARCH_KEYWORD:
       return action.keyword;
@@ -49,7 +49,7 @@ const keyword = (state = '', action) => {
   };
 };
 
-const users = (state = [], action) => {
+export const users = (state = [], action) => {
   switch(action.type) {
     case types.SET_SEARCH_RESULTS:
       return action.users;
@@ -68,7 +68,7 @@ const initialSearchedUser = {
   followings: []
 };
 
-const searchedUser = (state = initialSearchedUser, action) => {
+export const searchedUser = (state = initialSearchedUser, action) => {
   switch(action.type) {
     case types.SET_SEARCHED_USER:
       return action.user;
@@ -82,7 +82,7 @@ const initialLoggedIn = {
   user: {}
 };
 
-const loggedIn = (state = initialLoggedIn, action) => {
+export const loggedIn = (state = initialLoggedIn, action) => {
   switch(action.type) {
     case types.SET_LOGGED_IN:
       return action.loggedIn;
@@ -91,7 +91,7 @@ const loggedIn = (state = initialLoggedIn, action) => {
   };
 };
 
-const userPortraits = (state = [], action) => {
+export const userPortraits = (state = [], action) => {
   switch(action.type) {
     case types.SET_USER_PORTRAITS:
       return action.userPortraits;
@@ -108,7 +108,7 @@ const initialFaceType = {
   lip: 0
 };
 
-const faceType = (state = initialFaceType, action) => {
+export const faceType = (state = initialFaceType, action) => {
   switch(action.type) {
     case types.SET_FACE_TYPE:
       return action.faceType;
@@ -125,9 +125,9 @@ const initialOptionTheme = {
     ['#F3B780', '#ee8862'], 
     ['#8D5524', '#30150e']
   ]
-};;
+};
 
-const optionTheme = (state = initialOptionTheme, action) => {
+export const optionTheme = (state = initialOptionTheme, action) => {
   switch(action.type) {
     case types.SET_OPTION_THEME:
       return action.optionTheme;
@@ -136,7 +136,7 @@ const optionTheme = (state = initialOptionTheme, action) => {
   };
 };
 
-const currentOption = (state = 0, action) => {
+export const currentOption = (state = 0, action) => {
   switch(action.type) {
     case types.SET_CURRENT_OPTION:
       return action.currentOption;
@@ -147,11 +147,10 @@ const currentOption = (state = 0, action) => {
 
 const initialDropdownStatus = {
   status: false,
-  position: {},
   item: {}
 };
 
-const dropdownStatus = (state = initialDropdownStatus, action) => {
+export const dropdownStatus = (state = initialDropdownStatus, action) => {
   switch(action.type) {
     case types.SET_DROPDOWN_STATUS:
       return action.dropdownStatus;
@@ -160,7 +159,7 @@ const dropdownStatus = (state = initialDropdownStatus, action) => {
   };
 };
 
-const fontLoaded = (state = false, action) => {
+export const fontLoaded = (state = false, action) => {
   switch(action.type) {
     case types.SET_FONT_LOADED:
       return action.fontLoaded;

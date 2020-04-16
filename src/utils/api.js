@@ -1,7 +1,8 @@
 import axios from 'axios';
 import _ from 'lodash';
+import * as SecureStore from 'expo-secure-store';
 
-import { IP_ADDRESS } from '../constants/config';
+import { IP_ADDRESS, ACCESS_TOKEN } from '../constants/config';
 import { generateFaceType } from './index';
 
 export const fetchSignup = (signupInfo, handleSubmit, navigation) => {
@@ -19,8 +20,43 @@ export const fetchSignup = (signupInfo, handleSubmit, navigation) => {
     if (error.response.status === 409) {
       alert('이미 존재하는 아이디입니다.');
     } else {
-      alert("Upload failed!");
+      alert("회원가입에 실패했습니다");
     }
+  });
+};
+
+export const fetchLogin = (loginInfo, handleSubmit, navigation) => {
+  axios({
+    method: 'post',
+    url: `${IP_ADDRESS}/api/auth/login`,
+    data: { ...loginInfo }
+  })
+  .then(response => {
+    const { user, token, photos } = response.data;
+    
+    alert("반갑습니다");
+
+    SecureStore.setItemAsync(ACCESS_TOKEN, token);
+    handleSubmit(true, user, photos);
+
+    navigation.navigate('Home');
+  })
+  .catch(error => {
+    alert("로그인에 실패했습니다");
+  });
+};
+
+export const fetchUserPortraits = (user, setUserPortraits) => {
+  axios({
+    method: 'get',
+    url: `${IP_ADDRESS}/api/users/${user._id}/photos`
+  })
+  .then(response => {
+    setUserPortraits(response.data.photos);
+  })
+  .catch(error => {
+    console.log("error", error);
+    alert("failed!");
   });
 };
 
@@ -103,7 +139,6 @@ export const handleFollow = (loggedIn, user, setSearchedUser) => {
 
 export const handleDoubletap = (item, loggedIn, user, setUserPortraits) => {
   const uri = item.like_users.includes(loggedIn.user._id) ? 'unlike' : 'like';
-  console.log('hello');
   axios({
     method: 'put',
     url: `${IP_ADDRESS}/api/users/${loggedIn.user._id}/${uri}/${item._id}`,
@@ -111,6 +146,21 @@ export const handleDoubletap = (item, loggedIn, user, setUserPortraits) => {
   })
   .then(response => {
     setUserPortraits(response.data.photos);
+  })
+  .catch(error => {
+    alert("Upload failed!");
+  });
+};
+
+export const fetchKeyword = (keyword, loggedIn, setSearchKeyword, setSearchResults) => {
+  setSearchKeyword(keyword);
+  axios({
+    method: 'get',
+    url: `${IP_ADDRESS}/api/users/${loggedIn.user.user_id}/search`,
+    params: { keyword: keyword }
+  })
+  .then(response => {
+    setSearchResults(response.data);
   })
   .catch(error => {
     alert("Upload failed!");
