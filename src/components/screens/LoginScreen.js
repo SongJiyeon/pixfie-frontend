@@ -27,7 +27,6 @@ export function LoginScreen ({ loginInfo, handleChange, handleSubmit, navigation
       navigation.navigate('Home');
     })
     .catch(error => {
-      console.log("upload error", error);
       alert("Upload failed!");
     });
   };

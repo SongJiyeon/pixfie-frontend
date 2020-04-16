@@ -1,5 +1,58 @@
+import Constants from 'expo-constants';
+import * as Permissions from 'expo-permissions';
+import * as ImagePicker from 'expo-image-picker';
+
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../constants/canvas';
 import * as pixel from '../assets/faceCanvas';
+
+export const getPermissionAsync = async () => {
+  if (Constants.platform.ios) {
+    const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+    if (status !== 'granted') {
+      alert('Sorry, we need camera roll permissions to make this work!');
+    }
+  }
+};
+
+export const openCamera = async (loggedIn, setPhoto, navigation) => {
+
+  if (!loggedIn.status) {
+    alert('로그인이 필요한 서비스입니다');
+    return navigation.navigate('Login');
+  }
+
+  let result = await ImagePicker.launchCameraAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    allowsEditing: true,
+    aspect: [1, 1],
+    quality: 1
+  });
+
+  if (!result.cancelled) {
+    setPhoto(result.uri);
+    navigation.navigate('Ready');
+  }
+};
+
+export const pickImage = async (loggedIn, setPhoto, navigation) => {
+
+  if (!loggedIn.status) {
+    alert('로그인이 필요한 서비스입니다');
+    return navigation.navigate('Login');
+  }
+
+  let result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    allowsEditing: true,
+    aspect: [1, 1],
+    quality: 1
+  });
+
+  if (!result.cancelled) {
+    setPhoto(result.uri);
+    navigation.navigate('Ready');
+  }
+};
 
 export const generateFaceType = landmarks => {
   const faceType = {

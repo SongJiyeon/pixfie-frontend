@@ -1,68 +1,19 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-
-import axios from 'axios';
 
 import { setPhoto, setFaceType } from '../../actions/index';
-import { generateFaceType } from '../../utils/index';
-import { IP_ADDRESS } from '../../constants/config';
+import { openCamera, pickImage } from '../../utils/index';
+import { fetchImage } from '../../utils/api';
 
-function ReadyScreen ({ loggedIn, photoUrl, setPhoto, setFaceType, navigation }) {
-
-  const fetchImage = async () => {
-    console.log('Ready photo: ' + photoUrl);
-    const photo = {
-      uri: photoUrl,
-      name: 'new-photo.jpg',
-      type: 'multipart/form-data',
-    };
-
-    const data = new FormData();
-    data.append('photo', photo);
-
-    axios.post(`${IP_ADDRESS}/api/users/${loggedIn.user._id}/photos`, data, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-    .then(response => {
-      setFaceType(generateFaceType(response.data));
-      navigation.navigate('Result');
-    })
-    .catch(error => {
-      console.log('error', error);
-    });
-  };
-
-  const openCamera = async () => {
-    let result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1
-    });
-
-    if (!result.cancelled) {
-      setPhoto(result.uri);
-      navigation.navigate('Ready');
-    }
-  };
-  
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1
-    });
-  
-    if (!result.cancelled) {
-      setPhoto(result.uri);
-      navigation.navigate('Ready');
-    }
-  };
+export function ReadyScreen (props) {
+  const {
+    loggedIn,
+    photoUrl,
+    setPhoto,
+    setFaceType,
+    navigation
+  } = props;
 
   return (
     <View style={styles.container}>
@@ -70,13 +21,13 @@ function ReadyScreen ({ loggedIn, photoUrl, setPhoto, setFaceType, navigation })
       {photoUrl &&
         <Image source={{ uri: photoUrl }} style={{ width: 200, height: 200 }} />}
       </View>
-      <TouchableOpacity style={styles.buttonReady} onPress={fetchImage}>
+      <TouchableOpacity style={styles.buttonReady} onPress={() => fetchImage(photoUrl, loggedIn, setFaceType, navigation)}>
         <Text style={styles.buttonText}>픽셀 프로필 만들기</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.buttonCamera} onPress={openCamera}>
+      <TouchableOpacity style={styles.buttonCamera} onPress={() => openCamera(loggedIn, setPhoto, navigation)}>
         <Text style={styles.buttonText}>사진 다시 찍기</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.buttonGallery} onPress={pickImage}>
+      <TouchableOpacity style={styles.buttonGallery} onPress={() => pickImage(loggedIn, setPhoto, navigation)}>
         <Text style={styles.buttonText}>사진 다시 가져오기</Text>
       </TouchableOpacity>
     </View>

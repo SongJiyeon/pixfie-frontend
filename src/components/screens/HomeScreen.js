@@ -3,83 +3,46 @@ import { connect } from 'react-redux';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 import { AppLoading } from 'expo';
-import Constants from 'expo-constants';
-import { useFonts } from '@use-expo/font';
-import * as ImagePicker from 'expo-image-picker';
-import * as Permissions from 'expo-permissions';
+import * as Font from 'expo-font';
 
 import Header from '../layouts/Header';
-import { setPhoto } from '../../actions/index';
+import { setPhoto, setFontLoaded } from '../../actions/index';
+import { getPermissionAsync, openCamera, pickImage } from '../../utils/index';
 
-export function HomeScreen ({ loggedIn, setPhoto, navigation }) {
-  const [fontsLoaded] = useFonts({
-    'slkscr': require('../../../android/app/src/main/assets/fonts/slkscr.ttf'),
-  });
+const customFonts = {
+  'slkscr': require('../../../android/app/src/main/assets/fonts/slkscr.ttf'),
+};
+
+export function HomeScreen (props) {
+  const {
+    fontLoaded,
+    loggedIn,
+    setPhoto,
+    setFontLoaded,
+    navigation
+  } = props;
 
   useEffect(() => {
+    const loadFont = async () => {
+      await Font.loadAsync(customFonts);
+      setFontLoaded(true);
+    };
+
+    loadFont();
     getPermissionAsync();
   }, []);
 
-  const getPermissionAsync = async () => {
-    if (Constants.platform.ios) {
-      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-      if (status !== 'granted') {
-        alert('Sorry, we need camera roll permissions to make this work!');
-      }
-    }
-  };
-
-  const openCamera = async () => {
-
-    if (!loggedIn.status) {
-      alert('로그인이 필요한 서비스입니다');
-      return navigation.navigate('Login');
-    }
-
-    let result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1
-    });
-
-    if (!result.cancelled) {
-      setPhoto(result.uri);
-      navigation.navigate('Ready');
-    }
-  };
-  
-  const pickImage = async () => {
-
-    if (!loggedIn.status) {
-      alert('로그인이 필요한 서비스입니다');
-      return navigation.navigate('Login');
-    }
-
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1
-    });
-  
-    if (!result.cancelled) {
-      setPhoto(result.uri);
-      navigation.navigate('Ready');
-    }
-  };
-
-  if (!fontsLoaded) {
+  if (!fontLoaded) {
     return <AppLoading />;
   } else {
     return (
       <View style={styles.container}>
         <Header navigation={navigation} />
         <Text style={styles.title}>pixfie</Text>
-        <TouchableOpacity style={styles.button} onPress={openCamera}>
+        <TouchableOpacity style={styles.button} onPress={() => openCamera(loggedIn, setPhoto, navigation)}>
           <Text style={styles.buttonText}>사진 찍기</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={pickImage}>
+        <TouchableOpacity style={styles.button} onPress={() => pickImage(loggedIn, setPhoto, navigation)}>
           <Text style={styles.buttonText}>사진 가져오기</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Edit')}>
@@ -92,13 +55,15 @@ export function HomeScreen ({ loggedIn, setPhoto, navigation }) {
 
 const mapStateToProps = state => {
   return {
-    loggedIn: state.loggedIn
+    loggedIn: state.loggedIn,
+    fontLoaded: state.fontLoaded,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    setPhoto: photo => { dispatch(setPhoto(photo)); }
+    setPhoto: photo => { dispatch(setPhoto(photo)); },
+    setFontLoaded: fontLoaded => { dispatch(setFontLoaded(fontLoaded)); }
   };
 };
 

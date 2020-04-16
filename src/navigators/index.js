@@ -14,7 +14,6 @@ import LoginScreen from '../components/screens/LoginScreen';
 import SignupScreen from '../components/screens/SignupScreen';
 import MypageScreen from '../components/screens/MypageScreen';
 import EditScreen from '../components/screens/EditScreen';
-import ResultScreen from '../components/screens/ResultScreen';
 
 import { setLoggedIn } from '../actions/index';
 
@@ -60,7 +59,6 @@ function HomeStack() {
       <Stack.Screen name="Mypage" component={MypageScreen} />
       <Stack.Screen name="Ready" component={ReadyScreen} />
       <Stack.Screen name="Edit" component={EditScreen} />
-      <Stack.Screen name="Result" component={ResultScreen} />
     </Stack.Navigator>
   );
 };

@@ -18,7 +18,7 @@ import { setLoggedIn, setUserPortraits, setDropdownStatus, setSearchedUser } fro
 export function MypageScreen ({ loggedIn, searchedUser, setSearchedUser, userPortraits, setUserPortraits, setDropdownStatus, route, navigation }) {
   const isMypage = !route.params;
   const user = isMypage ? loggedIn.user : searchedUser;
-  const isFollowing = user.followers.includes(loggedIn.user._id);
+  const isFollowing = isMypage ? false : user.followers.includes(loggedIn.user._id);
 
   useEffect(() => {
     const getPhotos = navigation.addListener('focus', () => {
@@ -42,7 +42,7 @@ export function MypageScreen ({ loggedIn, searchedUser, setSearchedUser, userPor
     
     switch(mode) {
       case 'Edit':
-        return navigation.navigate('Edit', { portrait: item });
+        return navigation.navigate('Edit', { portrait: item, mode: 'Edit' });
       case 'Delete':
         return deletePortrait(item, user, setUserPortraits);
     };

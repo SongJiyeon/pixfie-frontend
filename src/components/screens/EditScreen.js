@@ -5,18 +5,30 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Canvas from 'react-native-canvas';
 
 import Header from '../layouts/Header';
-import { setFaceType, setOptionTheme, setCurrentOption } from '../../actions/index';
-import { handleCanvas, carouselHandler } from '../../utils/index';
 import { savePortrait } from '../../utils/api';
+import { handleCanvas, carouselHandler } from '../../utils/index';
+import { setFaceType, setOptionTheme, setCurrentOption } from '../../actions/index';
 
-export function EditScreen ({ loggedIn, faceType, setFaceType, optionTheme, option, setCurrentOption, route, navigation }) {
-  const { portrait } = route.params;
+export function EditScreen (props) {
+  const {
+    loggedIn,
+    faceType,
+    option,
+    optionTheme,
+    setFaceType,
+    setCurrentOption,
+    setOptionTheme,
+    route,
+    navigation
+  } = props;
+
+  const { portrait, mode } = route.params;
+  const isEdit = mode === 'Edit';
 
   useEffect(() => {
-    const setEditFace = navigation.addListener('focus', () => {
-      setFaceType(portrait.faceType);
+    return navigation.addListener('focus', () => {
+      return isEdit ? setFaceType(portrait.faceType) : '';
     });
-    return setEditFace;
   }, [navigation]);
 
   const pressHandler = direction => {
@@ -33,9 +45,15 @@ export function EditScreen ({ loggedIn, faceType, setFaceType, optionTheme, opti
     : { ...faceType, [optionTheme.id]: optionTheme.options[newOption] });
   };
 
+  const saveHandler = () => {
+    isEdit ?
+    savePortrait('put', loggedIn.user._id, faceType, 'Mypage', navigation, portrait)
+    : savePortrait('post', loggedIn.user._id, faceType, 'Home', navigation);
+  };
+
   return (
     <View style={styles.container}>
-      <Header name="Edit" navigation={navigation} />
+      <Header name={isEdit ? "Edit" : "Result"} navigation={navigation} />
       <View style={styles.optionControlContainer}>
         <TouchableOpacity onPress={() => pressHandler('left')}>
           <Entypo name="arrow-bold-left" size={20} color="gray" />
@@ -48,11 +66,11 @@ export function EditScreen ({ loggedIn, faceType, setFaceType, optionTheme, opti
       <View>
         <Canvas style={styles.canvas} ref={canvas => handleCanvas(canvas, faceType)} /> 
       </View>
-      <TouchableOpacity style={styles.button} onPress={() => savePortrait('put', loggedIn.user._id, faceType, 'Mypage', navigation, portrait)}>
+      <TouchableOpacity style={styles.button} onPress={saveHandler}>
         <Text style={styles.buttonText}>픽셀 프로필 저장</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.goBack() }>
-        <Text style={styles.buttonText}>취소</Text>
+      <TouchableOpacity style={styles.button} onPress={() => isEdit ? navigation.goBack() : navigation.navigate('Home')}>
+        <Text style={styles.buttonText}>{isEdit ? '취소' : '다시하기'}</Text>
       </TouchableOpacity>
     </View>
   );

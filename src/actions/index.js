@@ -83,3 +83,10 @@ export const setDropdownStatus = dropdownStatus => {
     dropdownStatus
   };
 };
+
+export const setFontLoaded = fontLoaded => {
+  return {
+    type: types.SET_FONT_LOADED,
+    fontLoaded
+  };
+};

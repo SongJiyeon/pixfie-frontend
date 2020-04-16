@@ -2,6 +2,51 @@ import axios from 'axios';
 import _ from 'lodash';
 
 import { IP_ADDRESS } from '../constants/config';
+import { generateFaceType } from './index';
+
+export const fetchSignup = (signupInfo, handleSubmit, navigation) => {
+  axios({
+    method: 'post',
+    url: `${IP_ADDRESS}/api/auth/signup`,
+    data: { ...signupInfo }
+  })
+  .then(response => {
+    alert("회원가입을 축하합니다");
+    handleSubmit();
+    navigation.navigate('Login');
+  })
+  .catch(error => {
+    if (error.response.status === 409) {
+      alert('이미 존재하는 아이디입니다.');
+    } else {
+      alert("Upload failed!");
+    }
+  });
+};
+
+export const fetchImage = async (photoUrl, loggedIn, setFaceType, navigation) => {
+  const photo = {
+    uri: photoUrl,
+    name: 'new-photo.jpg',
+    type: 'multipart/form-data',
+  };
+
+  const data = new FormData();
+  data.append('photo', photo);
+
+  axios.post(`${IP_ADDRESS}/api/users/${loggedIn.user._id}/photos`, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+  .then(response => {
+    setFaceType(generateFaceType(response.data));
+    navigation.navigate('Edit', { portrait: null, mode: 'Result' });
+  })
+  .catch(error => {
+    alert('얼굴 분석에 실패했습니다');
+  });
+};
 
 export const savePortrait = (method, user_id, faceType, departure, navigation, portrait) => {
   axios({

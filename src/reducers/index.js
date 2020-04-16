@@ -160,6 +160,15 @@ const dropdownStatus = (state = initialDropdownStatus, action) => {
   };
 };
 
+const fontLoaded = (state = false, action) => {
+  switch(action.type) {
+    case types.SET_FONT_LOADED:
+      return action.fontLoaded;
+    default:
+      return state;
+  };
+};
+
 export default combineReducers({
   photo,
   signupInfo,
@@ -172,5 +181,6 @@ export default combineReducers({
   faceType,
   optionTheme,
   currentOption,
-  dropdownStatus
+  dropdownStatus,
+  fontLoaded
 });
