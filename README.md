@@ -20,7 +20,6 @@ pixfie는 사진을 통한 얼굴 인식으로 개인 맞춤 픽셀 프로필 �
 - Features
 - Skills
 - Deployment
-- Configuration
 - Challenges
 - Things To Do
 
@@ -36,6 +35,27 @@ pixfie는 사진을 통한 얼굴 인식으로 개인 맞춤 픽셀 프로필 �
 
 <br>
 
+## Mock Up
+
+초기 구상한 Mock Up은 아래와 같습니다
+
+
+
+1. 메인화면에서 drawer를 통해 login, signup 접근 -> signup -> login 후에 drawer에 회원 정보 출력
+2. 메인 화면에서 사진찍기를 통해 카메라 앱 오픈 -> 사진 준비 페이지 -> 사진 완료 페이지
+3. 메인 화면에서 사진가져오기를 통해 갤러리 오픈 -> 사진 준비 페이지 -> 사진 완료 페이지
+
+![mockup1](src/assets/pixfie-mockup1.png)
+
+
+
+1. 메인화면에서 drawer를 통해 로그인한 사용자의 마이페이지 접근 -> 마이페이지의 사용자 프로필 수정 버튼 -> 수정 페이지
+2. 메인화면에서 돋보기를 통해 사용자 검색 -> 검색된 사용자 페이지 방문 가능
+
+![mockup2](src/assets/pixfie-mockup2.png)
+
+<br>
+
 ## Requirement
 
 - 안드로이드 기기에서 사용 가능한 어플리케이션입니다
@@ -48,6 +68,44 @@ pixfie는 사진을 통한 얼굴 인식으로 개인 맞춤 픽셀 프로필 �
 - 아래 링크를 통해 expo앱에서 어플리케이션을 실행할 수 있습니다
 
   [pixfie](https://exp.host/@songjiyeon/pixfie)
+  
+- 직접 실행해보기
+
+  - 아래의 방법을 통해 android studio emulator에서 실행할 수 있습니다.
+
+  ```git
+  git clone https://github.com/SongJiyeon/pixfie-frontend.git
+  cd pixfie-frontend
+  npm install
+  expo start
+  ```
+
+  
+
+  - ❕서버는 AWS Elastic Beanstalk에 배포되어 클라이언트만으로도 실행이 가능합니다
+  - ❕만약 서버를 실행하고 싶다면 여러가지 환경변수가 필요합니다. 아래의 파일을 생성하여 환경변수를 설정해주세요
+
+  
+
+  ```json
+  /* .env */
+  
+  DB_HOST="db-host-url"
+  AWS_ACCESS_KEY_ID="aws-access-key-id"
+  AWS_SECRET_ACCESS_KEY="aws-secret-access-key"
+  AWS_REGION="ap-northeast-2"
+  AWS_BUCKET="aws-bucket"
+  KAKAO_APP_KEY="kakao-app-key"
+  TOKEN_SECRET_KEY="token-secret-key"
+  BCRYPT_SALT_ROUNDS="bcrypt-salt-rounds"
+  ```
+
+  ```git
+  git clone https://github.com/SongJiyeon/pixfie-backend.git
+  cd pixfie-backend
+  npm install
+  npm start
+  ```
 
 <br>
 
@@ -78,10 +136,24 @@ pixfie는 사진을 통한 얼굴 인식으로 개인 맞춤 픽셀 프로필 �
 - Nodejs와 React 테스트를 위한 Jest 테스팅 프레임워크
 - Enzyme 테스트 도구를 이용한 React Component 테스트
 
+#### data
+
+- MongoDB를 통한 data관리
+- MongoDB 기반의 Node.js 전용 라이브러리 mongoose를 사용한 스키마 베이스 데이터 관리
+- MongoDB Atlas로 클라우드 데이터 저장 및 관리
+- AWS s3 클라우드 서비스를 이용하여 사용자 이미지 저장 및 url 생성
+
+#### etc
+
+- Notion.io 어플리케이션을 통해 troubleshooting, 기록과 task 관리
+
+  [pixfie tasks](https://www.notion.so/ee05f074b8314e8795a12378fe991bc4?v=6ec27b789dbe42598ccff0f39834b08a)
+
 <br>
 
 ## Deployment
 
+- expo가 제공하는 `expo publish` 사용하여 클라이언트 배포
 - AWS Elastic Beanstalk 서버 배포
 
 <br>
@@ -184,6 +256,8 @@ pixfie는 사진을 통한 얼굴 인식으로 개인 맞춤 픽셀 프로필 �
 - 다양한 얼굴 타입 추가
 
 - 에러 처리
+
+<br>
 
 ## Maintainers
 
