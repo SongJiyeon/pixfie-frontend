@@ -2,17 +2,15 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { View, Text, TextInput, Image, TouchableOpacity, StyleSheet } from 'react-native';
 
-import axios from 'axios';
-
-import { setSearchKeyword, setSearchResults } from '../../actions';
+import { setSearchKeyword, setSearchResults, setSearchedUser } from '../../actions';
+import { fetchKeyword } from '../../utils/api';
 import Header from '../layouts/Header';
 
-const Results = ({ users, navigation }) => {
+export const Results = ({ users, setSearchedUser, navigation }) => {
 
   const handlePress = user => {
-    navigation.navigate('Userpage', {
-      user
-    });
+    setSearchedUser(user);
+    navigation.navigate('Mypage', { user });
   };
 
   return (
@@ -34,27 +32,20 @@ const Results = ({ users, navigation }) => {
   );
 };
 
-const SearchScreen = props => {
-  const { navigation, keyword, users, handleChange, setSearchResults, clearStates } = props;
+export const SearchScreen = props => {
+  const { 
+    keyword, 
+    loggedIn, 
+    users, 
+    setSearchKeyword, 
+    setSearchResults, 
+    setSearchedUser, 
+    clearStates,
+    navigation } = props;
 
   useEffect(() => {
     clearStates();
   }, []);
-
-  const onChangeText = value => {
-    handleChange(value);
-    axios({
-      method: 'get',
-      url: `http://192.168.0.136:3000/api/users/search`,
-      params: { keyword: keyword }
-    })
-    .then(response => {
-      setSearchResults(response.data);
-    })
-    .catch(error => {
-      alert("Upload failed!");
-    });
-  };
 
   return (
     <View style={styles.container}>
@@ -62,9 +53,12 @@ const SearchScreen = props => {
       <TextInput
         style={styles.inputText}
         placeholder="아이디/이름 검색"
-        onChangeText={value => onChangeText(value)}
+        onChangeText={keyword => fetchKeyword(keyword, loggedIn, setSearchKeyword, setSearchResults)}
         value={keyword} />
-      <Results users={users} navigation={navigation} />
+      <Results
+        users={users}
+        setSearchedUser={setSearchedUser}
+        navigation={navigation} />
     </View>
   );
 };
@@ -72,18 +66,16 @@ const SearchScreen = props => {
 const mapStateToProps = state => {
   return {
     keyword: state.keyword,
+    loggedIn: state.loggedIn,
     users: state.users
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    handleChange(value) {
-      dispatch(setSearchKeyword(value));
-    },
-    setSearchResults(result) {
-      dispatch(setSearchResults(result));
-    },
+    setSearchKeyword(value) { dispatch(setSearchKeyword(value)); },
+    setSearchedUser(user) { dispatch(setSearchedUser(user)) },
+    setSearchResults(result) { dispatch(setSearchResults(result)); },
     clearStates() {
       dispatch(setSearchKeyword(''));
       dispatch(setSearchResults([]));

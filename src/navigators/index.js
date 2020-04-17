@@ -1,12 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 import { Text, View, Image, StyleSheet } from 'react-native';
-
-import axios from 'axios';
 
 import HomeScreen from '../components/screens/HomeScreen';
 import ReadyScreen from '../components/screens/ReadyScreen';
@@ -14,7 +13,7 @@ import SearchScreen from '../components/screens/SearchScreen';
 import LoginScreen from '../components/screens/LoginScreen';
 import SignupScreen from '../components/screens/SignupScreen';
 import MypageScreen from '../components/screens/MypageScreen';
-import UserpageScreen from '../components/screens/UserpageScreen';
+import EditScreen from '../components/screens/EditScreen';
 
 import { setLoggedIn } from '../actions/index';
 
@@ -23,14 +22,43 @@ const Stack = createStackNavigator();
 
 function Home() {
   return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          let iconName;
+
+          if (route.name === 'Home') {
+            iconName = 'ios-home';
+          } else if (route.name === 'My Page') {
+            iconName = 'md-person'
+          } else if (route.name === 'Search') {
+            iconName = 'ios-search';
+          }
+
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+      })}
+      tabBarOptions={{
+        activeTintColor: 'tomato',
+        inactiveTintColor: 'gray',
+      }}>
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="My Page" component={MypageScreen} />
+      <Tab.Screen name="Search" component={SearchScreen} />
+    </Tab.Navigator>
+  );
+}
+
+function HomeStack() {
+  return (
     <Stack.Navigator headerMode="none">
-      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="Search" component={SearchScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Signup" component={SignupScreen} />
       <Stack.Screen name="Mypage" component={MypageScreen} />
-      <Stack.Screen name="Userpage" component={UserpageScreen} />
       <Stack.Screen name="Ready" component={ReadyScreen} />
+      <Stack.Screen name="Edit" component={EditScreen} />
     </Stack.Navigator>
   );
 };
@@ -39,22 +67,11 @@ Home.navigationOptions = {
   headerShown: false,
 };
 
+const Tab = createBottomTabNavigator();
+
 const MyDrawer = ({ loggedIn, handleSubmit }) => {
 
-  const handleLogout = () => {
-    axios({
-      method: 'get',
-      url: 'http://192.168.0.136:3000/api/auth/logout'
-    })
-    .then(response => {
-      console.log("upload success", response.data);
-      handleSubmit(false);
-    })
-    .catch(error => {
-      console.log("upload error", error);
-      alert("Upload failed!");
-    });
-  };
+  const handleLogout = () => { handleSubmit(false, {}); };
 
   const CustomDrawerContent = props => {
     return (
@@ -74,12 +91,11 @@ const MyDrawer = ({ loggedIn, handleSubmit }) => {
     <>
       {loggedIn.status ?
       (<Drawer.Navigator drawerContent={props => <CustomDrawerContent {...props} />}>
-        <Drawer.Screen name="Home" component={Home} />
-        <Drawer.Screen name="My Page" component={MypageScreen} />
+        <Drawer.Screen name="Home" component={HomeStack} />
       </Drawer.Navigator>)
       :
       (<Drawer.Navigator>
-        <Drawer.Screen name="Home" component={Home} />
+        <Drawer.Screen name="Home" component={HomeStack} />
         <Drawer.Screen name="Login" component={LoginScreen} />
         <Drawer.Screen name="Signup" component={SignupScreen} />
       </Drawer.Navigator>)}
@@ -95,8 +111,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    handleSubmit(state) {
-      dispatch(setLoggedIn(state));
+    handleSubmit(status, user) {
+      dispatch(setLoggedIn({ status, user }));
     }
   };
 };
@@ -112,8 +128,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   profileImage: {
-    width: 80,
-    height: 80,
+    width: 90,
+    height: 90,
+    borderRadius: 90 / 2,
+    borderColor: 'gray',
+    borderWidth: 3,
     marginBottom: 20
   },
   userId: {

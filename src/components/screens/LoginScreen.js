@@ -1,35 +1,15 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 
-import axios from 'axios';
+import { fetchLogin } from '../../utils/api';
+import { setLoginInfo, setLoggedIn, setUserPortraits } from '../../actions/index';
 
-import { setLoginInfo, setLoggedIn } from '../../actions/index';
-
-function LoginScreen ({ loginInfo, handleChange, handleSubmit, navigation }) {
-
-  const logIn = () => {
-    axios({
-      method: 'post',
-      url: 'http://192.168.0.136:3000/api/auth/login',
-      data: { ...loginInfo }
-    })
-    .then(response => {
-      console.log("upload success", response.data);
-      alert("반갑습니다");
-      handleSubmit(true, response.data);
-      navigation.navigate('Home');
-    })
-    .catch(error => {
-      console.log("upload error", error);
-      alert("Upload failed!");
-    });
-  };
-
+export function LoginScreen ({ loginInfo, handleChange, handleSubmit, navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>로그인</Text>
-      <View>
+      <View style={styles.inputContainer}>
         <TextInput
         style={styles.inputText}
         placeholder="아이디"
@@ -42,7 +22,12 @@ function LoginScreen ({ loginInfo, handleChange, handleSubmit, navigation }) {
         onChangeText={value => handleChange('password', value)}
         value={loginInfo.password} />
       </View>
-      <Button style={styles.button} title='로그인' onPress={logIn} />
+      <TouchableOpacity style={styles.button} onPress={() => fetchLogin(loginInfo, handleSubmit, navigation)}>
+        <Text style={styles.buttonText}>로그인</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Signup')}>
+        <Text style={styles.buttonText}>회원가입</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -58,9 +43,10 @@ const mapDispatchToProps = dispatch => {
     handleChange(info, value) {
       dispatch(setLoginInfo({ [info]: value }));
     },
-    handleSubmit(status, user) {
+    handleSubmit(status, user, photos) {
       dispatch(setLoginInfo({ user_id: '', password: '' }));
       dispatch(setLoggedIn({ status, user }));
+      dispatch(setUserPortraits(photos));
     }
   };
 };
@@ -73,6 +59,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  title: {
+    fontSize: 40,
+    marginBottom: 25,
+    fontWeight: 'bold'
+  },
   inputText: {
     width: 300,
     height: 45,
@@ -82,7 +73,23 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
     backgroundColor: 'white'
   },
+  inputContainer: {
+    marginBottom: 25,
+  },
   button: {
-    width: 250
-  }
+    width: 200,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 10,
+    marginRight: 10,
+    marginBottom: 10,
+    backgroundColor: '#4968A6',
+    elevation: 1
+  },
+  buttonText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'white'
+  },
 });

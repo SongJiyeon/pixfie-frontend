@@ -1,85 +1,34 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
 
-import axios from 'axios';
+import { setPhoto, setFaceType } from '../../actions/index';
+import { openCamera, pickImage } from '../../utils/index';
+import { fetchImage } from '../../utils/api';
 
-import { setPhoto } from '../../actions/index';
-
-function ReadyScreen ({ photoUrl, setPhoto, navigation }) {
-
-  const fetchImage = () => {
-    console.log(photoUrl);
-    const photo = {
-      uri: photoUrl,
-      name: 'new-photo.jpg',
-      type: 'multipart/form-data',
-    };
-
-    const data = new FormData();
-    data.append('photo', photo);
-
-    axios({
-      method: 'POST',
-      url: `http://192.168.0.136:3000/api/photo`,
-      body: data,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
-    .then(response => {
-      console.log("upload success", response.data);
-      navigation.navigate('Home');
-    })
-    .catch(error => {
-      console.log("upload error", error);
-      alert("Upload failed!");
-    });
-  };
-
-  const openCamera = async () => {
-    let result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1
-    });
-
-    if (!result.cancelled) {
-      setPhoto(result.uri);
-      navigation.navigate('Ready');
-    }
-  };
-  
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1
-    });
-  
-    if (!result.cancelled) {
-      setPhoto(result.uri);
-      navigation.navigate('Ready');
-    }
-  };
+export function ReadyScreen (props) {
+  const {
+    loggedIn,
+    photoUrl,
+    setPhoto,
+    setFaceType,
+    navigation
+  } = props;
 
   return (
     <View style={styles.container}>
-      <View style={styles.main}>
+      <View style={styles.photoContainer}>
       {photoUrl &&
         <Image source={{ uri: photoUrl }} style={{ width: 200, height: 200 }} />}
       </View>
-      <TouchableOpacity style={styles.button} onPress={fetchImage}>
-        <Text>픽셀 프로필 만들기</Text>
+      <TouchableOpacity style={styles.buttonReady} onPress={() => fetchImage(photoUrl, loggedIn, setFaceType, navigation)}>
+        <Text style={styles.buttonText}>픽셀 프로필 만들기</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={openCamera}>
-        <Text>사진 다시 찍기</Text>
+      <TouchableOpacity style={styles.buttonCamera} onPress={() => openCamera(loggedIn, setPhoto, navigation)}>
+        <Text style={styles.buttonText}>사진 다시 찍기</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={pickImage}>
-        <Text>사진 다시 가져오기</Text>
+      <TouchableOpacity style={styles.buttonGallery} onPress={() => pickImage(loggedIn, setPhoto, navigation)}>
+        <Text style={styles.buttonText}>사진 다시 가져오기</Text>
       </TouchableOpacity>
     </View>
   );
@@ -87,13 +36,15 @@ function ReadyScreen ({ photoUrl, setPhoto, navigation }) {
 
 const mapStateToProps = state => {
   return {
+    loggedIn: state.loggedIn,
     photoUrl: state.photo
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    setPhoto: photo => { dispatch(setPhoto(photo)); }
+    setPhoto: photo => { dispatch(setPhoto(photo)); },
+    setFaceType: faceType => { dispatch(setFaceType(faceType)); }
   };
 };
 
@@ -105,16 +56,46 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  button: {
-    borderRadius: 10,
-    width: 150,
-    height: 50,
+  photoContainer: {
+    marginBottom: 20
+  },
+  buttonReady: {
+    width: 200,
+    height: 40,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 10,
     marginRight: 10,
     marginBottom: 10,
-    backgroundColor: 'gray'
+    backgroundColor: '#4968A6',
+    elevation: 1
+  },
+  buttonCamera: {
+    width: 200,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 10,
+    marginRight: 10,
+    marginBottom: 10,
+    backgroundColor: '#F2C53D',
+    elevation: 1
+  },
+  buttonGallery: {
+    width: 200,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 10,
+    marginRight: 10,
+    marginBottom: 10,
+    backgroundColor: '#14A647',
+    elevation: 1
+  },
+  buttonText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'white'
   },
   title: {
     color: '#2c2c2c',

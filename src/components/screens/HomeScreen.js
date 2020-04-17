@@ -1,74 +1,52 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import * as Permissions from 'expo-permissions';
-import Constants from 'expo-constants';
-import { useFonts } from '@use-expo/font';
+
 import { AppLoading } from 'expo';
-import { setPhoto } from '../../actions/index';
+import * as Font from 'expo-font';
 
 import Header from '../layouts/Header';
+import { setPhoto, setFontLoaded } from '../../actions/index';
+import { getPermissionAsync, openCamera, pickImage } from '../../utils/index';
 
-function HomeScreen ({ setPhoto, navigation }) {
-  const [fontsLoaded] = useFonts({
-    'slkscr': require('../../../android/app/src/main/assets/fonts/slkscr.ttf'),
-  });
+const customFonts = {
+  'slkscr': require('../../../android/app/src/main/assets/fonts/slkscr.ttf'),
+};
+
+export function HomeScreen (props) {
+  const {
+    fontLoaded,
+    loggedIn,
+    setPhoto,
+    setFontLoaded,
+    navigation
+  } = props;
 
   useEffect(() => {
+    const loadFont = async () => {
+      await Font.loadAsync(customFonts);
+      setFontLoaded(true);
+    };
+
+    loadFont();
     getPermissionAsync();
   }, []);
 
-  const getPermissionAsync = async () => {
-    if (Constants.platform.ios) {
-      const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-      if (status !== 'granted') {
-        alert('Sorry, we need camera roll permissions to make this work!');
-      }
-    }
-  };
-
-  const openCamera = async () => {
-    let result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1
-    });
-
-    if (!result.cancelled) {
-      setPhoto(result.uri);
-      navigation.navigate('Ready');
-    }
-  };
-  
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1
-    });
-  
-    if (!result.cancelled) {
-      setPhoto(result.uri);
-      navigation.navigate('Ready');
-    }
-  };
-
-  if (!fontsLoaded) {
+  if (!fontLoaded) {
     return <AppLoading />;
   } else {
     return (
       <View style={styles.container}>
         <Header navigation={navigation} />
         <Text style={styles.title}>pixfie</Text>
-        <TouchableOpacity style={styles.button} onPress={openCamera}>
-          <Text style={styles.buttonText}>사진 찍기</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={pickImage}>
-          <Text style={styles.buttonText}>사진 가져오기</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.buttonCamera} onPress={() => openCamera(loggedIn, setPhoto, navigation)}>
+            <Text style={styles.buttonText}>사진 찍기</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.buttonGallery} onPress={() => pickImage(loggedIn, setPhoto, navigation)}>
+            <Text style={styles.buttonText}>사진 가져오기</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -76,13 +54,15 @@ function HomeScreen ({ setPhoto, navigation }) {
 
 const mapStateToProps = state => {
   return {
-    photo: state.photo
+    loggedIn: state.loggedIn,
+    fontLoaded: state.fontLoaded,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    setPhoto: photo => { dispatch(setPhoto(photo)); }
+    setPhoto: photo => { dispatch(setPhoto(photo)); },
+    setFontLoaded: fontLoaded => { dispatch(setFontLoaded(fontLoaded)); }
   };
 };
 
@@ -97,24 +77,34 @@ const styles = StyleSheet.create({
   },
   title: {
     color: '#2c2c2c',
-    fontSize: 70,
-    marginTop: '45%',
-    marginBottom: 30,
+    fontSize: 80,
+    marginTop: '10%',
+    marginBottom: 40,
     fontWeight: '300',
     fontFamily: 'slkscr',
     textAlign: 'center',
   },
-  button: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
+  buttonCamera: {
+    borderRadius: 150 / 2,
     width: 150,
-    height: 50,
+    height: 150,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 10,
     marginRight: 10,
-    marginBottom: 10,
-    backgroundColor: 'gray'
+    marginBottom: 20,
+    backgroundColor: '#D9843B',
+  },
+  buttonGallery: {
+    borderRadius: 150 / 2,
+    width: 150,
+    height: 150,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 10,
+    marginRight: 10,
+    marginBottom: 20,
+    backgroundColor: '#14A647'
   },
   buttonText: {
     fontSize: 20,
