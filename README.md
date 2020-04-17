@@ -129,6 +129,7 @@ pixfie는 사진을 통한 얼굴 인식으로 개인 맞춤 픽셀 프로필 �
 - Node.js를 이용한 서버 구현
 - Express 웹 프레임워크로 API 작성
 - jwt를 이용한 token기반 로컬 로그인 구현
+- react-navigation을 활용한 모바일 앱 UI 관리
 - react-native-canvas로 픽셀 이미지 구현
 
 #### test
