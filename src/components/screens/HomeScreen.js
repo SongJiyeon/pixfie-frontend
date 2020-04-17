@@ -39,15 +39,14 @@ export function HomeScreen (props) {
       <View style={styles.container}>
         <Header navigation={navigation} />
         <Text style={styles.title}>pixfie</Text>
-        <TouchableOpacity style={styles.button} onPress={() => openCamera(loggedIn, setPhoto, navigation)}>
-          <Text style={styles.buttonText}>사진 찍기</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => pickImage(loggedIn, setPhoto, navigation)}>
-          <Text style={styles.buttonText}>사진 가져오기</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Edit')}>
-          <Text style={styles.buttonText}>사진 편집</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.buttonCamera} onPress={() => openCamera(loggedIn, setPhoto, navigation)}>
+            <Text style={styles.buttonText}>사진 찍기</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.buttonGallery} onPress={() => pickImage(loggedIn, setPhoto, navigation)}>
+            <Text style={styles.buttonText}>사진 가져오기</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -78,24 +77,34 @@ const styles = StyleSheet.create({
   },
   title: {
     color: '#2c2c2c',
-    fontSize: 70,
-    marginTop: '35%',
-    marginBottom: 30,
+    fontSize: 80,
+    marginTop: '10%',
+    marginBottom: 40,
     fontWeight: '300',
     fontFamily: 'slkscr',
     textAlign: 'center',
   },
-  button: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
+  buttonCamera: {
+    borderRadius: 150 / 2,
     width: 150,
-    height: 50,
+    height: 150,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 10,
     marginRight: 10,
-    marginBottom: 10,
-    backgroundColor: 'gray'
+    marginBottom: 20,
+    backgroundColor: '#D9843B',
+  },
+  buttonGallery: {
+    borderRadius: 150 / 2,
+    width: 150,
+    height: 150,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 10,
+    marginRight: 10,
+    marginBottom: 20,
+    backgroundColor: '#14A647'
   },
   buttonText: {
     fontSize: 20,

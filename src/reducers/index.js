@@ -105,13 +105,15 @@ const initialFaceType = {
   eyebrows: 0,
   eyes: 0,
   nose: 0,
-  lip: 0
+  lip: 0,
+  hair: 0,
+  clothes: 0
 };
 
 export const faceType = (state = initialFaceType, action) => {
   switch(action.type) {
     case types.SET_FACE_TYPE:
-      return action.faceType;
+      return { ...state, ...action.faceType };
     default:
       return state;
   };
@@ -120,6 +122,7 @@ export const faceType = (state = initialFaceType, action) => {
 const initialOptionTheme = {
   name: 'face color',
   id: 'faceColor',
+  type: 'color',
   options: [
     ['#FFDBAC', '#ee8862'],
     ['#F3B780', '#ee8862'], 
@@ -134,6 +137,15 @@ export const optionTheme = (state = initialOptionTheme, action) => {
     default:
       return state;
   };
+};
+
+export const currentTheme = (state = 0, action) => {
+  switch(action.type) {
+    case types.SET_CURRENT_THEME:
+      return action.currentTheme;
+    default:
+      return state;
+  }
 };
 
 export const currentOption = (state = 0, action) => {
@@ -179,6 +191,7 @@ export default combineReducers({
   userPortraits,
   faceType,
   optionTheme,
+  currentTheme,
   currentOption,
   dropdownStatus,
   fontLoaded

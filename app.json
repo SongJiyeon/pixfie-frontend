@@ -1,9 +1,9 @@
 {
-  "name": "frontend",
-  "displayName": "frontend",
+  "name": "pixfie",
+  "displayName": "pixfie",
   "expo": {
-    "name": "frontend",
-    "slug": "frontend",
+    "name": "pixfie",
+    "slug": "pixfie",
     "version": "1.0.0",
     "platforms": [
       "ios",

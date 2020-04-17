@@ -70,6 +70,13 @@ export const setOptionTheme = optionTheme => {
   };
 };
 
+export const setCurrentTheme = currentTheme => {
+  return {
+    type: types.SET_CURRENT_THEME,
+    currentTheme
+  };
+};
+
 export const setCurrentOption = currentOption => {
   return {
     type: types.SET_CURRENT_OPTION,

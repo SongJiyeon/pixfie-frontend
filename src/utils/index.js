@@ -5,6 +5,11 @@ import * as ImagePicker from 'expo-image-picker';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../constants/canvas';
 import * as pixel from '../assets/faceCanvas';
 
+export const loginAlert = navigation => {
+  alert('로그인이 필요한 서비스입니다.');
+  navigation.navigate('Login');
+};
+
 export const getPermissionAsync = async () => {
   if (Constants.platform.ios) {
     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
@@ -25,7 +30,7 @@ export const openCamera = async (loggedIn, setPhoto, navigation) => {
     mediaTypes: ImagePicker.MediaTypeOptions.Images,
     allowsEditing: true,
     aspect: [1, 1],
-    quality: 1
+    quality: 0.1
   });
 
   if (!result.cancelled) {
@@ -45,7 +50,7 @@ export const pickImage = async (loggedIn, setPhoto, navigation) => {
     mediaTypes: ImagePicker.MediaTypeOptions.Images,
     allowsEditing: true,
     aspect: [1, 1],
-    quality: 1
+    quality: 0.1
   });
 
   if (!result.cancelled) {
@@ -62,17 +67,19 @@ export const generateFaceType = landmarks => {
     eyeColor: '#000',
     lipColor: '#ee8862'
   };
-
-  if (landmarks.facial_points.jaw[2][0] - landmarks.facial_points.jaw[5][0] > 0.05) {
+  
+  if (landmarks.facial_points.jaw[5][0] - landmarks.facial_points.jaw[2][0] > 0.05) {
     faceType.face = 0;
   } else {
-    faceType.face = 0;
+    faceType.face = 1;
   }
 
-  if (landmarks.facial_points.right_eyebrow[0][1] < landmarks.facial_points.right_eyebrow[4][1]) {
+  if (landmarks.facial_points.right_eyebrow[0][1] - landmarks.facial_points.right_eyebrow[2][1] < 0.02) {
     faceType.eyebrows = 0;
-  } else if (landmarks.facial_points.right_eyebrow[0][1] > landmarks.facial_points.right_eyebrow[4][1]) {
+  } else if (landmarks.facial_points.right_eyebrow[0][1] < landmarks.facial_points.right_eyebrow[4][1]) {
     faceType.eyebrows = 1;
+  } else if (landmarks.facial_points.right_eyebrow[0][1] > landmarks.facial_points.right_eyebrow[4][1]) {
+    faceType.eyebrows = 2;
   }
 
   if (landmarks.facial_points.right_eye[0][1] < landmarks.facial_points.right_eye[3][1]) {
@@ -81,10 +88,10 @@ export const generateFaceType = landmarks => {
     faceType.eyes = 1;
   }
 
-  if (landmarks.facial_points.nose[8][0] - landmarks.facial_points.nose[4][0] > 0.08) {
+  if (landmarks.facial_points.nose[8][0] - landmarks.facial_points.nose[4][0] > 0.073) {
     faceType.nose = 0;
   } else {
-    faceType.nose = 0;
+    faceType.nose = 1;
   }
 
   if (landmarks.facial_points.lip[0][0] - landmarks.facial_points.lip[6][0] > 0.1) {
@@ -111,7 +118,11 @@ export const handleCanvas = (canvas, faceType) => {
         faceShadow: faceType.faceShadowColor,
         eyes: faceType.eyeColor,
         eyebrows: faceType.eyebrowColor,
-        lip: faceType.lipColor
+        lip: faceType.lipColor,
+        black: '#000',
+        D2D2D2: '#d2d2d2',
+        darkBrown: '#23120b',
+        lightBrown: '#855723'
       },
       layers: [
         ...pixel.face('face')[faceType.face],
@@ -121,9 +132,9 @@ export const handleCanvas = (canvas, faceType) => {
         ...pixel.eyeShadow('faceShadow')[faceType.eyes],
         ...pixel.nose('faceShadow')[faceType.nose],
         ...pixel.lip('lip')[faceType.lip],
-        // ...pixel.hair('black'),
+        ...pixel.hair('black')[faceType.hair],
+        ...pixel.clothes('D2D2D2')[faceType.clothes],
         // ...pixel.acc('black'),
-        // ...pixel.clothes('black')
       ]
     };
 

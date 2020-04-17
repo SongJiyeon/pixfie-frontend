@@ -9,7 +9,7 @@ export function LoginScreen ({ loginInfo, handleChange, handleSubmit, navigation
   return (
     <View style={styles.container}>
       <Text style={styles.title}>로그인</Text>
-      <View>
+      <View style={styles.inputContainer}>
         <TextInput
         style={styles.inputText}
         placeholder="아이디"
@@ -59,6 +59,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  title: {
+    fontSize: 40,
+    marginBottom: 25,
+    fontWeight: 'bold'
+  },
   inputText: {
     width: 300,
     height: 45,
@@ -67,6 +72,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     borderColor: 'transparent',
     backgroundColor: 'white'
+  },
+  inputContainer: {
+    marginBottom: 25,
   },
   button: {
     width: 200,

@@ -8,18 +8,21 @@ import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet } from 'react
 
 import Header from '../layouts/Header';
 import DropDown from '../layouts/Dropdown';
-import { handleCanvas } from '../../utils/index';
+import { loginAlert, handleCanvas } from '../../utils/index';
 import { fetchUserPortraits, handleFollow, handleDoubletap, deletePortrait } from '../../utils/api';
 import { setLoggedIn, setUserPortraits, setDropdownStatus, setSearchedUser } from '../../actions';
 
 export function MypageScreen ({ loggedIn, searchedUser, setSearchedUser, userPortraits, setUserPortraits, setDropdownStatus, route, navigation }) {
   const isMypage = !route.params;
-  const user = isMypage ? loggedIn.user : searchedUser;
-  const isFollowing = isMypage ? false : user.followers.includes(loggedIn.user._id);
+
+  const user = isMypage ? loggedIn.status ? loggedIn.user : false : searchedUser;
+  const isFollowing = isMypage ? false : loggedIn.status ? user.followers.includes(loggedIn.user._id): false;
 
   useEffect(() => {
+    isMypage && !loggedIn.status && loginAlert(navigation);
+
     return navigation.addListener('focus', () => {
-      fetchUserPortraits(user, setUserPortraits);
+      user && fetchUserPortraits(user, setUserPortraits);
     });
   }, [navigation]);
 
@@ -79,11 +82,11 @@ export function MypageScreen ({ loggedIn, searchedUser, setSearchedUser, userPor
         <View style={styles.followContainer}>
           <View style={styles.followCounts}>
             <View style={styles.followBox}>
-              <Text style={styles.follow}>{user.followers.length}</Text>
+              <Text style={styles.follow}>{user ? user.followers.length : 0}</Text>
               <Text style={styles.followTitle}>팔로워</Text>
             </View>
             <View style={styles.followBox}>
-              <Text style={styles.follow}>{user.followings.length}</Text>
+              <Text style={styles.follow}>{user ? user.followings.length : 0}</Text>
               <Text style={styles.followTitle}>팔로잉</Text>
             </View>
           </View>

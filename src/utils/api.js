@@ -55,7 +55,6 @@ export const fetchUserPortraits = (user, setUserPortraits) => {
     setUserPortraits(response.data.photos);
   })
   .catch(error => {
-    console.log("error", error);
     alert("failed!");
   });
 };
