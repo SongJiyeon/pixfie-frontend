@@ -21,6 +21,7 @@ export function EditScreen (props) {
     setCurrentOption,
     setCurrentTheme,
     setOptionTheme,
+    clearOptions,
     route,
     navigation
   } = props;
@@ -63,6 +64,13 @@ export function EditScreen (props) {
     isEdit ?
     savePortrait('put', loggedIn.user._id, faceType, 'Mypage', navigation, portrait)
     : savePortrait('post', loggedIn.user._id, faceType, 'Home', navigation);
+
+    clearOptions();
+  };
+
+  const redoHandler = () => {
+    isEdit ? navigation.goBack() : navigation.navigate('Home');
+    clearOptions();
   };
 
   return (
@@ -92,7 +100,7 @@ export function EditScreen (props) {
       <TouchableOpacity style={styles.buttonSave} onPress={saveHandler}>
         <Text style={styles.buttonText}>픽셀 프로필 저장</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.buttonRedo} onPress={() => isEdit ? navigation.goBack() : navigation.navigate('Home')}>
+      <TouchableOpacity style={styles.buttonRedo} onPress={redoHandler}>
         <Text style={styles.buttonText}>{isEdit ? '취소' : '다시하기'}</Text>
       </TouchableOpacity>
     </View>
@@ -112,9 +120,17 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     setFaceType: faceType => { dispatch(setFaceType(faceType)); },
-    setOptionTheme: optionTheme => { dispatch(setOptionTheme(optionTheme)) },
+    setOptionTheme: optionTheme => { 
+      dispatch(setOptionTheme(optionTheme));
+      dispatch(setCurrentOption(0));
+    },
     setCurrentTheme: theme => { dispatch(setCurrentTheme(theme)) },
     setCurrentOption: option => { dispatch(setCurrentOption(option)); },
+    clearOptions: () => {
+      dispatch(setOptionTheme(optionThemes[0]));
+      dispatch(setCurrentOption(0));
+      dispatch(setCurrentOption(0));
+    }
   };
 };
 
