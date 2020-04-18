@@ -20,7 +20,7 @@ import { setLoggedIn } from '../actions/index';
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
-function Home() {
+function Home({ loggedIn }) {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -43,16 +43,22 @@ function Home() {
         inactiveTintColor: 'gray',
       }}>
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="My Page" component={MypageScreen} />
+      {loggedIn.status && <Tab.Screen name="My Page" component={MypageScreen} />}
       <Tab.Screen name="Search" component={SearchScreen} />
     </Tab.Navigator>
   );
 }
 
+const HomeContainer = connect(state => {
+  return {
+    loggedIn: state.loggedIn
+  };
+}, null)(Home);
+
 function HomeStack() {
   return (
     <Stack.Navigator headerMode="none">
-      <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen name="Home" component={HomeContainer} />
       <Stack.Screen name="Search" component={SearchScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Signup" component={SignupScreen} />
