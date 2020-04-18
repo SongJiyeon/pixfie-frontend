@@ -152,16 +152,15 @@ export const handleCanvas = (canvas, faceType) => {
     };
 
     function draw(img, x, y) {
-      for (var i = 0; i < img.layers.length; i++) {
-        var data = img.layers[i];
-        var loc  = {
-              x: (x||0) + data.x,
-              y: (y||0) + data.y
-            };
+      for (let i = 0; i < img.layers.length; i++) {
+        const data = img.layers[i];
+        const loc  = { x: (x||0) + data.x, y: (y||0) + data.y };
+
         ctx.fillStyle = img.colors[data.color];
         ctx.fillRect(loc.x, loc.y, data.width, data.height);
       }
     };
+    
     draw(imgObj);
   }
 };
