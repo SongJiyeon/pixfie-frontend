@@ -28,6 +28,12 @@ export const optionThemes = [
     name: 'clothes',
     id: 'clothes',
     type: 'draw',
-    options: [[0]]
-  }
+    options: [[0], [1]]
+  },
+  {
+    name: 'acc',
+    id: 'acc',
+    type: 'draw',
+    options: [[0], [1]]
+  },
 ];

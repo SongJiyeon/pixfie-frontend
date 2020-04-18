@@ -61,6 +61,14 @@ export const pickImage = async (loggedIn, setPhoto, navigation) => {
 
 export const generateFaceType = landmarks => {
   const faceType = {
+    face: 0,
+    eyebrows: 0,
+    eyes: 0,
+    nose: 0,
+    lip: 0,
+    hair: 0,
+    clothes: 0,
+    acc: 0,
     faceColor: '#FFDBAC',
     faceShadowColor: '#ee8862',
     eyebrowColor: '#000',
@@ -94,10 +102,12 @@ export const generateFaceType = landmarks => {
     faceType.nose = 1;
   }
 
-  if (landmarks.facial_points.lip[0][0] - landmarks.facial_points.lip[6][0] > 0.1) {
+  if (landmarks.facial_points.lip[9][1] - landmarks.facial_points.lip[2][1] > 0.06) {
     faceType.lip = 0;
+  } else if (landmarks.facial_points.lip[9][1] - landmarks.facial_points.lip[0][1] > 0.03) {
+    faceType.lip = 1;
   } else {
-    faceType.lip = 0;
+    faceType.lip = 2;
   }
 
   return faceType;
@@ -120,9 +130,12 @@ export const handleCanvas = (canvas, faceType) => {
         eyebrows: faceType.eyebrowColor,
         lip: faceType.lipColor,
         black: '#000',
+        white: '#fff',
+        gray: '#808080',
         D2D2D2: '#d2d2d2',
         darkBrown: '#23120b',
-        lightBrown: '#855723'
+        lightBrown: '#855723',
+        vacoBlue: '#62cfff',
       },
       layers: [
         ...pixel.face('face')[faceType.face],
@@ -134,7 +147,7 @@ export const handleCanvas = (canvas, faceType) => {
         ...pixel.lip('lip')[faceType.lip],
         ...pixel.hair('black')[faceType.hair],
         ...pixel.clothes('D2D2D2')[faceType.clothes],
-        // ...pixel.acc('black'),
+        ...pixel.acc('black')[faceType.acc],
       ]
     };
 

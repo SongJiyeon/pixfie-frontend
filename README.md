@@ -67,7 +67,7 @@ pixfie는 사진을 통한 얼굴 인식으로 개인 맞춤 픽셀 프로필 �
 
 - 아래 링크를 통해 expo앱에서 어플리케이션을 실행할 수 있습니다
 
-  [pixfie](https://exp.host/@songjiyeon/pixfie)
+  [pixfie](https://exp.host/@songjiyeon/frontend)
   
 - 직접 실행해보기
 
@@ -137,7 +137,7 @@ pixfie는 사진을 통한 얼굴 인식으로 개인 맞춤 픽셀 프로필 �
 - Nodejs와 React 테스트를 위한 Jest 테스팅 프레임워크
 - Enzyme 테스트 도구를 이용한 React Component 테스트
 
-#### data
+#### database
 
 - MongoDB를 통한 data관리
 - MongoDB 기반의 Node.js 전용 라이브러리 mongoose를 사용한 스키마 베이스 데이터 관리

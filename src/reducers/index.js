@@ -107,7 +107,8 @@ const initialFaceType = {
   nose: 0,
   lip: 0,
   hair: 0,
-  clothes: 0
+  clothes: 0,
+  acc: 0
 };
 
 export const faceType = (state = initialFaceType, action) => {
