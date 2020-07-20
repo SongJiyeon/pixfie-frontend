@@ -21,7 +21,7 @@
     "expo-image-picker": "^8.1.0",
     "expo-secure-store": "^8.1.0",
     "expo-updates": "~0.1.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-native": "~0.61.4",
